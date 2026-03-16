@@ -59,12 +59,19 @@ PRINCIPLES_PATH: ${CLAUDE_SKILL_DIR}/reference/PRINCIPLES.md       # Creation pr
   - "/skill-forge create agent for QA testing"
   - "build an agent that does security reviews"
 
-### Evaluate Existing Skill
+### Evaluate Existing Skill (Independent Review — Default)
 
-- IF: User wants to audit, review, or clean up an existing skill, agent, or command
-- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/evaluate.md`
+- IF: User wants to audit, review, or clean up AND did NOT say "inline"
+- THEN: Read `${CLAUDE_SKILL_DIR}/cookbook/evaluate.md` for the checklist, then spawn a subagent using the Agent tool with the evaluate workflow as its task. Pass it the skill path, the full PRINCIPLES.md content, and the evaluate.md checklist. The subagent returns a report. This ensures independent, unbiased review.
 - EXAMPLES:
   - "/skill-forge evaluate doc-vault"
   - "audit all skills in ~/.claude/skills/"
   - "review the quality-gate skill"
-  - "clean up the browser skill"
+
+### Evaluate Existing Skill (Inline)
+
+- IF: User wants to evaluate AND says "inline" or "quick check"
+- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/evaluate.md` directly in the main context. Use this for quick checks or when interactive discussion during evaluation is needed.
+- EXAMPLES:
+  - "/skill-forge evaluate doc-vault inline"
+  - "quick check the browser skill"
