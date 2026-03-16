@@ -1,6 +1,6 @@
 # Evaluate Existing Skill
 
-Workflow for auditing, reviewing, and cleaning up existing skills, agents, and commands. Assumes PRINCIPLES.md is already loaded (SKILL.md Step 2).
+Audit skills, agents, and commands against creation principles. Reports issues by severity with specific fix suggestions. Assumes PRINCIPLES.md is already loaded (SKILL.md Step 2).
 
 ## Variables
 

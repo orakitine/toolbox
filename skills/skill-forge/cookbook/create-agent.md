@@ -17,7 +17,7 @@ Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINC
    - The capability prefix should match the related skill's name for family discoverability
    - Example: skill is `browser` → agent is `browser-qa` or `browser-automation`
    - Example: skill is `elevenlabs` → agent is `elevenlabs-voice-designer`
-   - Validate: does `/registry search <prefix>` find this agent alongside its skill?
+   - Validate: does searching by prefix find this agent alongside its skill?
 
 3. **Write the Description**
    - Apply description rules from Principles (see "Description: The 100-Token Pitch")
