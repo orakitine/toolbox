@@ -33,7 +33,9 @@ AUTO_FIX: false                              # Whether to auto-fix issues (with 
    - WARNING: `context: fork` set but referenced `agent:` doesn't exist?
    - INFO: `argument-hint` present if skill takes arguments?
    - INFO: `context`/`agent` fields set if skill delegates to an agent?
+   - INFO: For agents — `color` field present? Matches role convention from Principles?
    - Example: Missing description → CRITICAL: "No description field. This skill will have poor activation accuracy."
+   - Example: Agent missing color → INFO: "No color field. See Principles for role-based color convention."
 
 4. **Check Naming**
    - WARNING: Does the name describe the implementation instead of the capability?
