@@ -36,6 +36,7 @@ staging/                        # Work-in-progress before graduation
 ## Graduated Skills
 
 - **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands. Includes creation principles, directory layout reference, and evaluation workflow.
+- **browser** — Headless browser automation via playwright-cli. Core capability skill — orchestration skills (browser-workflow, browser-review) and agents (browser-qa) are separate.
 
 ## Staging
 
