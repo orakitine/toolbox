@@ -103,10 +103,16 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
         - Tool: Glob for `package.json`, `pyproject.toml`
      ```
 
-10. **Create Cookbooks (if needed)**
-    - IF: workflow has branching logic with >2 scenarios → create cookbooks
-    - IF: any scenario needs >20 lines of detail → move to cookbook
-    - IF: reference material is heavy → put in `reference/` dir, load from cookbook
+10. **Create Cookbooks OR Separate Skills (if needed)**
+    - First: is this a different SCENARIO of the same task, or a higher-level construct?
+    - IF: different scenario, same abstraction level → create cookbook
+    - IF: higher-order construct that CONSUMES this skill → create a separate skill with `requires` dependency
+    - Example: JS vs Python quality checks → cookbooks (same task, different context)
+    - Example: "run saved workflows through browser" → separate skill (orchestration consuming browser)
+    - IF: cookbook path chosen:
+      - workflow has branching logic with >2 scenarios → create cookbooks
+      - any scenario needs >20 lines of detail → move to cookbook
+      - reference material is heavy → put in `reference/` dir, load from cookbook
     - Each cookbook follows same structure: purpose, optional variables, workflow, optional failure criteria
     - Route from SKILL.md with IF/THEN/EXAMPLES pattern:
       ```markdown

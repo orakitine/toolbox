@@ -40,6 +40,28 @@ A 50-line cookbook with clear examples is leaner than a 20-line cookbook that re
 - Consistent formatting reducing cognitive load
 - Clear structure enabling quick navigation
 
+### 5. One Skill, One Level of Abstraction
+
+A skill should do one thing at one level of abstraction. If skill B consumes skill A, they are separate skills — not cookbooks within A.
+
+**Cookbooks** are for different scenarios at the SAME level of abstraction:
+- `quality-gate/cookbook/javascript.md` vs `quality-gate/cookbook/python.md` — same task, different context
+
+**Separate skills** are for different levels of abstraction that compose together:
+- `browser` — drives a browser (low-level capability)
+- `browser-workflow` — loads and runs saved workflows through browser (orchestration)
+- `browser-review` — discovers stories, fans out QA agents, aggregates results (parallel orchestration)
+
+The test: "Would this cookbook make sense without the parent skill's core workflow?" If yes, it's a separate skill.
+
+Use the registry's `requires` field to declare composition:
+```yaml
+- name: browser-workflow
+  requires: [skill:browser]
+- name: browser-review
+  requires: [skill:browser, agent:browser-qa]
+```
+
 ---
 
 ## Architecture
@@ -255,6 +277,7 @@ Git history is the version system. To roll back: `git log`, checkout the previou
 - **Deep nesting** — Cookbooks shouldn't reference other cookbooks. One level deep from SKILL.md.
 - **Duplication** — Same info in two places means one will rot.
 - **Forbidden sections** — Quick Reference, separate Examples, Notes, Instructions, Success Criteria.
+- **Omni-skills** — A skill that orchestrates AND does the low-level work. Split by abstraction level.
 
 ### Content
 - **Teaching Claude what it knows** — Don't explain `git`. Do explain your specific workflow.

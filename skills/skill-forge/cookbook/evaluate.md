@@ -71,6 +71,7 @@ AUTO_FIX: false                              # Whether to auto-fix issues (with 
 
 8. **Check Cookbooks**
    - CRITICAL: Cookbooks reference other cookbooks? (must be one level deep from SKILL.md)
+   - WARNING: Cookbook operates at a different abstraction level than the core skill? (should be a separate skill with `requires`)
    - WARNING: SKILL.md cookbook routing missing IF/THEN/EXAMPLES structure?
    - WARNING: Cookbook files missing purpose statement?
    - WARNING: Cookbook over 200 lines? (consider splitting or moving heavy content to reference/)
@@ -79,6 +80,7 @@ AUTO_FIX: false                              # Whether to auto-fix issues (with 
    - INFO: Cookbooks with their own Variables that shadow skill-level Variables?
    - Example: Cookbook routing says "See cookbook/js.md" without IF/THEN → WARNING: "Use IF/THEN/EXAMPLES routing format."
    - Example: "The latest version of ESLint is 9.2" → WARNING: "Time-sensitive info will rot. Link to docs instead."
+   - Example: Browser skill has "run-workflow" cookbook that orchestrates saved workflows → WARNING: "Different abstraction level. Should be a separate skill with `requires: [skill:browser]`."
 
 9. **Check Distribution Readiness**
    - WARNING: Secrets, API keys, or credentials in any file?
