@@ -1,8 +1,10 @@
 # Skill Creation Principles
 
-The WHY and conventions behind Claude Code skills, agents, and commands. This is reference material — for step-by-step creation workflows, see the skill-forge cookbooks.
+The WHY and conventions behind Claude Code skills, agents, and commands. This is reference material — for step-by-step creation workflows, see the skill-forge cookbooks. For the full directory layout, see `reference/directory-layout.md`.
 
-**Last Updated**: 2026-03-16
+**Skills** are workflows and procedures (the WHAT). **Agents** are specialized personas (the WHO). **Commands** are legacy (prefer skills for new work).
+
+**Last Updated**: 2026-03-17
 
 ---
 
@@ -52,9 +54,9 @@ A skill should do one thing at one level of abstraction. If skill B consumes ski
 - `browser-workflow` — loads and runs saved workflows through browser (orchestration)
 - `browser-review` — discovers stories, fans out QA agents, aggregates results (parallel orchestration)
 
-The test: "Would this cookbook make sense without the parent skill's core workflow?" If yes, it's a separate skill.
+The test: does this cookbook share the parent's core workflow steps, or does it define its own independent workflow? Shared steps = cookbook. Own workflow = separate skill.
 
-Use the registry's `requires` field to declare composition:
+Use the registry's `requires` field (a registry-level field in `registry.yaml`, not SKILL.md frontmatter) to declare composition:
 ```yaml
 - name: browser-workflow
   requires: [skill:browser]
@@ -105,7 +107,7 @@ When activated: spawn a subagent using the named agent definition, give it the s
 ### Practical Implications
 
 - The `description` field is the most important line in the skill. Write it like a search snippet — specific trigger words, clear purpose, when to use it. Specific descriptions dramatically improve activation accuracy.
-- Keep SKILL.md body under 300 lines. Heavy detail goes in cookbooks.
+- Keep SKILL.md body under ~300 lines (guideline, not a hard limit — prefer clarity over hitting the number). Heavy detail goes in cookbooks.
 - Cookbooks are free until loaded. A skill with 5 cookbooks that loads 1 at a time beats a monolithic SKILL.md.
 
 ---
@@ -276,7 +278,7 @@ Git history is the version system. To roll back: `git log`, checkout the previou
 - **Monolithic SKILL.md** — Over 300 lines? Break it into cookbooks.
 - **Deep nesting** — Cookbooks shouldn't reference other cookbooks. One level deep from SKILL.md.
 - **Duplication** — Same info in two places means one will rot.
-- **Forbidden sections** — Quick Reference, separate Examples, Notes, Instructions, Success Criteria.
+- **Forbidden sections** — Quick Reference, separate Examples, Notes, Instructions, Success Criteria. These duplicate what belongs inline in workflow steps or variable comments.
 - **Omni-skills** — A skill that orchestrates AND does the low-level work. Split by abstraction level.
 
 ### Content
