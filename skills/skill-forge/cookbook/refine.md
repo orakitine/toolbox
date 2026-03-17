@@ -2,15 +2,20 @@
 
 Rewrite an existing skill, agent, or command to meet current principles. Understands intent first, rewrites from scratch, then validates. Assumes PRINCIPLES.md is already loaded (SKILL.md Step 2).
 
+## Variables
+
+OUTPUT_SUFFIX: -refined                     # Suffix appended to original dir name for the rewrite
+
 ## Workflow
 
 1. **Read the Original Completely**
+   - Locate the skill from user input (path, name, or search)
    - Read SKILL.md (or AGENT.md, or command file)
    - Read ALL cookbooks, references, scripts, templates — everything in the directory
    - Read any related agents or commands that work with this skill
-   - Note the full directory structure
-   - Example: Read playwright-browser/SKILL.md → single file, no cookbooks
-   - Example: Read doc-vault/SKILL.md + 3 cookbooks + cache/ + README.md → complex skill
+   - Note the full directory structure and parent directory
+   - Example: Read `~/.claude/skills/playwright-browser/SKILL.md` → single file, no cookbooks
+   - Example: Read `~/.claude/skills/doc-vault/SKILL.md` + 3 cookbooks + cache/ + README.md → complex skill
 
 2. **Understand: Intent and Purpose**
    - What is this skill trying to accomplish? What problem does it solve?
@@ -35,6 +40,8 @@ Rewrite an existing skill, agent, or command to meet current principles. Underst
    - Example: elevenlabs → has elevenlabs-agent and voice-designer-agent
 
 5. **Rewrite from Principles**
+   - Create a new directory next to the original: `<original-name><OUTPUT_SUFFIX>/`
+   - IF: user specified an output path → use that instead
    - Start fresh — do NOT patch the old skill
    - Apply naming conventions: does the name need to change? (capability over implementation)
    - Write new frontmatter following current conventions
@@ -42,16 +49,16 @@ Rewrite an existing skill, agent, or command to meet current principles. Underst
    - Design new workflow with proper structure (bold steps, inline examples, IF/THEN)
    - Create cookbooks if branching logic exists
    - Move heavy reference material to reference/ directory
-   - IF: name is changing → note the old name for migration reference
-   - IF: related agents exist → update or note them for separate refine pass
-   - Example: `playwright-browser` → rewrite as `browser`, restructure commands as cookbooks
+   - The original remains untouched — it is the reference copy
+   - Example: `playwright-browser/` untouched → `playwright-browser-refined/` created next to it
+   - Example: `doc-vault/` untouched → `doc-vault-refined/` created next to it
 
 6. **Show the Diff**
    - Present the rewrite to the user
    - Highlight key changes: renamed? restructured? cookbooks added/removed?
    - Show before/after for the most significant sections
    - Ask the user to review before proceeding
-   - Example: "Renamed playwright-browser → browser. Moved run-workflow and ui-review from commands into cookbooks. Added proper frontmatter with description."
+   - Example: "Proposing rename playwright-browser → browser. Moved run-workflow and ui-review from commands into cookbooks. Added proper frontmatter with description."
 
 7. **Evaluate + Fix Loop**
    - Run the evaluate checklist against the NEW version (use evaluate.md steps 3-9)
@@ -59,7 +66,14 @@ Rewrite an existing skill, agent, or command to meet current principles. Underst
    - Repeat until evaluation passes clean (0 critical, 0 warning)
    - Example: First pass finds missing inline example in step 3 → add it → recheck → clean
 
-8. **Compare for Regression**
+8. **Fresh-Eyes Critique**
+   - Spawn a subagent using the Agent tool to review the migration
+   - Pass it: the original skill content, the refined skill content, and PRINCIPLES.md
+   - Task: "Compare these two versions. Is the rewrite faithful to the original's intent? Any capabilities lost? Any improvements missed? Is the new version following principles correctly?"
+   - The agent returns an independent critique
+   - IF: agent identifies issues → fix them before proceeding
+
+9. **Compare for Regression**
    - Compare original capabilities against rewritten version
    - For each workflow step or feature in the original:
      - Is it preserved in the new version?
@@ -89,7 +103,16 @@ Rewrite an existing skill, agent, or command to meet current principles. Underst
        + Proper frontmatter with description and allowed-tools
        + IF/THEN/EXAMPLES cookbook routing
      ```
-   - IF: capabilities were lost unintentionally → restore them before finalizing
+   - IF: capabilities were lost unintentionally → restore them before proceeding
+
+10. **Finalize**
+    - Present the user with options:
+      - **Replace**: delete original, rename refined to final name (e.g., `browser/`)
+      - **Keep both**: leave original and refined side by side for further comparison
+      - **Rename only**: keep refined as-is with the `-refined` suffix
+    - IF: user chooses replace AND name is changing → confirm the old name is no longer referenced elsewhere
+    - IF: related agents/commands also need updating → note them for a separate refine pass
+    - The user makes the final call — never auto-delete the original
 
 ## Error Handling
 
