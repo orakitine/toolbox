@@ -41,6 +41,7 @@ staging/                        # Work-in-progress before graduation
 ## Graduated Agents
 
 - **browser-operator** — General-purpose browser automation agent. Enables parallel browser sessions when spawned as subagent.
+- **browser-qa** — UI validation agent. Executes user stories against web apps with structured pass/fail reporting and screenshots.
 
 ## Staging
 
