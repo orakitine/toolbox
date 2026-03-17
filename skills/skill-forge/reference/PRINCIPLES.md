@@ -93,6 +93,21 @@ When activated: spawn a subagent using the named agent definition, give it the s
 - **Agents specialize behavior.** A `browser-qa` agent adds QA-specific constraints on top of the browser skill.
 - **Project-local skills encode domain knowledge.** A `critique` skill for a children's book project stays in that project.
 
+### Agent Colors
+
+Agents support a `color` field in frontmatter for visual identification in the CLI. Available: `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, `cyan`.
+
+Assign by role type for at-a-glance recognition:
+
+| Color | Role | Example |
+|---|---|---|
+| `green` | QA / validation | browser-qa |
+| `orange` | operator / automation | browser-operator |
+| `purple` | review / analysis | code-reviewer |
+| `blue` | research / exploration | doc-researcher |
+| `red` | destructive / deploy (caution) | deploy-agent |
+| `cyan` | creative / generation | voice-designer |
+
 ---
 
 ## Token Economics
