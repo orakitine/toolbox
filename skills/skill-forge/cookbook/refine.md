@@ -61,7 +61,8 @@ OUTPUT_SUFFIX: -refined                     # Suffix appended to original dir na
    - Example: "Proposing rename playwright-browser → browser. Moved run-workflow and ui-review from commands into cookbooks. Added proper frontmatter with description."
 
 7. **Evaluate + Fix Loop**
-   - Run the evaluate checklist against the NEW version (use evaluate.md steps 3-9)
+   - Run `/skill-forge evaluate inline` against the NEW version
+   - This routes through SKILL.md's own evaluation workflow — no cross-cookbook reference
    - IF: issues found → fix them
    - Repeat until evaluation passes clean (0 critical, 0 warning)
    - Example: First pass finds missing inline example in step 3 → add it → recheck → clean
