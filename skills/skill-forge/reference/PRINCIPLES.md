@@ -206,6 +206,19 @@ Principle: least privilege. A skill that only reads code shouldn't have `Write`.
 
 **Shell injection** runs at prompt-load time, before Claude sees the skill. Use for injecting dynamic context: `` !`git diff --cached` `` injects the current staged diff. Use sparingly — the output consumes tokens and runs every time the skill loads.
 
+### Prerequisites Section
+
+Optional section between Purpose and Variables. Use when the skill depends on external tools, services, or environment setup. List what must be available — don't install anything, just check and fail gracefully.
+
+```markdown
+## Prerequisites
+
+- `playwright-cli` must be installed and available in PATH
+- Node.js >= 18 required
+```
+
+The workflow should check prerequisites early and report clearly if something is missing.
+
 ### Variables: The Local Vocabulary Pattern
 
 Variables are a **prompt engineering pattern**, not a system feature. Claude parses them as markdown and holds them in context. They provide:

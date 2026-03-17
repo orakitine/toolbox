@@ -74,7 +74,14 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
      without auto-fixing.
      ```
 
-8. **Define Variables (if needed)**
+8. **Add Prerequisites (if needed)**
+   - IF: skill depends on external tools, services, or environment setup → add Prerequisites section after Purpose
+   - List what must be available — don't install anything
+   - The workflow should check early and fail gracefully if missing
+   - Example: `## Prerequisites\n\n- \`playwright-cli\` must be installed and available in PATH`
+   - IF: no external dependencies → skip this section
+
+9. **Define Variables (if needed)**
    - Only if there are genuinely configurable values
    - One per line, SCREAMING_SNAKE_CASE, inline comment
    - IF: value appears once and is self-explanatory → skip, inline it in the workflow
@@ -87,7 +94,7 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
      ENABLE_PYTHON: true               # Enable Python checks
      ```
 
-9. **Design the Workflow**
+10. **Design the Workflow**
    - Numbered steps with bold names
    - Each step MUST have an inline example showing expected behavior
    - Use IF/THEN for conditional logic
@@ -103,7 +110,7 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
         - Tool: Glob for `package.json`, `pyproject.toml`
      ```
 
-10. **Create Cookbooks OR Separate Skills (if needed)**
+11. **Create Cookbooks OR Separate Skills (if needed)**
     - First: is this a different SCENARIO of the same task, or a higher-level construct?
     - IF: different scenario, same abstraction level → create cookbook
     - IF: higher-order construct that CONSUMES this skill → create a separate skill with `requires` dependency
@@ -127,7 +134,7 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
         - "check code quality"
       ```
 
-11. **Create Supporting Files (if needed)**
+12. **Create Supporting Files (if needed)**
     - Consult `${CLAUDE_SKILL_DIR}/reference/directory-layout.md` for full layout options
     - `scripts/` — for deterministic operations (shell, python)
     - `templates/` — for structured output formats
@@ -135,7 +142,7 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
     - `prompts/` — for reusable sub-prompts
     - All internal references use `${CLAUDE_SKILL_DIR}` for portability
 
-12. **Validate the Skill**
+13. **Validate the Skill**
     - Read the complete skill end-to-end
     - Check against principles:
       - [ ] Frontmatter has explicit name, description, allowed-tools
