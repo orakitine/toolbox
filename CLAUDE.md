@@ -40,11 +40,14 @@ staging/                        # Work-in-progress before graduation
 - **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **browser-review** — Parallel UI validation. Discovers user stories, fans out browser-qa agents, aggregates pass/fail results.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
+- **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 
 ## Graduated Agents
 
 - **browser-operator** — General-purpose browser automation agent. Enables parallel browser sessions when spawned as subagent.
 - **browser-qa** — UI validation agent. Executes user stories against web apps with structured pass/fail reporting and screenshots.
+- **elevenlabs-operator** — Audio generation agent. Parallel-safe for batch audio tasks.
+- **elevenlabs-voice-designer** — Voice casting agent. Searches library, generates audition samples, returns structured recommendations.
 
 ## Staging
 
