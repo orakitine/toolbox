@@ -1,0 +1,99 @@
+# Refine an Existing Skill
+
+Rewrite an existing skill, agent, or command to meet current principles. Understands intent first, rewrites from scratch, then validates. Assumes PRINCIPLES.md is already loaded (SKILL.md Step 2).
+
+## Workflow
+
+1. **Read the Original Completely**
+   - Read SKILL.md (or AGENT.md, or command file)
+   - Read ALL cookbooks, references, scripts, templates — everything in the directory
+   - Read any related agents or commands that work with this skill
+   - Note the full directory structure
+   - Example: Read playwright-browser/SKILL.md → single file, no cookbooks
+   - Example: Read doc-vault/SKILL.md + 3 cookbooks + cache/ + README.md → complex skill
+
+2. **Understand: Intent and Purpose**
+   - What is this skill trying to accomplish? What problem does it solve?
+   - Who uses it and when? What triggers it?
+   - Capture the GOAL, not the implementation details
+   - Example: playwright-browser → "automates headless browsers for testing, scraping, and screenshots"
+   - Example: doc-vault → "caches API documentation locally so Claude has fresh, accurate references"
+
+3. **Understand: Caveats and Side Effects**
+   - Does this skill modify files, send messages, cost money?
+   - Are there edge cases or failure modes the original handles?
+   - What assumptions does it make about the environment?
+   - Example: doc-vault auto-triggers on doc keywords — could be noisy if too aggressive
+   - Example: fork-terminal launches new processes — has side effects
+
+4. **Understand: Relationships**
+   - Does this skill work with specific agents?
+   - Does it depend on other skills or tools?
+   - Is it part of a family (browser skill + browser-qa agent + browser commands)?
+   - Are other skills or agents expecting this one to exist?
+   - Example: playwright-browser → has browser-qa-agent and browser-automation-agent, plus browser/run-workflow and browser/ui-review commands
+   - Example: elevenlabs → has elevenlabs-agent and voice-designer-agent
+
+5. **Rewrite from Principles**
+   - Start fresh — do NOT patch the old skill
+   - Apply naming conventions: does the name need to change? (capability over implementation)
+   - Write new frontmatter following current conventions
+   - Write new Purpose section
+   - Design new workflow with proper structure (bold steps, inline examples, IF/THEN)
+   - Create cookbooks if branching logic exists
+   - Move heavy reference material to reference/ directory
+   - IF: name is changing → note the old name for migration reference
+   - IF: related agents exist → update or note them for separate refine pass
+   - Example: `playwright-browser` → rewrite as `browser`, restructure commands as cookbooks
+
+6. **Show the Diff**
+   - Present the rewrite to the user
+   - Highlight key changes: renamed? restructured? cookbooks added/removed?
+   - Show before/after for the most significant sections
+   - Ask the user to review before proceeding
+   - Example: "Renamed playwright-browser → browser. Moved run-workflow and ui-review from commands into cookbooks. Added proper frontmatter with description."
+
+7. **Evaluate + Fix Loop**
+   - Run the evaluate checklist against the NEW version (use evaluate.md steps 3-9)
+   - IF: issues found → fix them
+   - Repeat until evaluation passes clean (0 critical, 0 warning)
+   - Example: First pass finds missing inline example in step 3 → add it → recheck → clean
+
+8. **Compare for Regression**
+   - Compare original capabilities against rewritten version
+   - For each workflow step or feature in the original:
+     - Is it preserved in the new version?
+     - If removed, was it intentional? (document why)
+     - If changed, does the new approach cover the same cases?
+   - Check: any cookbooks, scripts, or templates in the original that weren't carried over?
+   - Check: any edge cases or error handling that was lost?
+   - Present a capability comparison:
+     ```
+     CAPABILITY COMPARISON: playwright-browser → browser
+     ═══════════════════════════════════════════════════
+
+     PRESERVED
+       ✓ Headless browser automation
+       ✓ Screenshot capture
+       ✓ UI review workflow
+       ✓ Parallel session support
+
+     CHANGED
+       ~ run-workflow command → cookbook/run-workflow.md (same capability, better structure)
+       ~ ui-review command → cookbook/ui-review.md
+
+     REMOVED
+       ✗ None
+
+     NEW
+       + Proper frontmatter with description and allowed-tools
+       + IF/THEN/EXAMPLES cookbook routing
+     ```
+   - IF: capabilities were lost unintentionally → restore them before finalizing
+
+## Error Handling
+
+- IF: original skill is too complex to understand → ask the user to explain the intent
+- IF: naming conflict with existing skill → discuss with user before renaming
+- IF: related agents/commands also need refining → note them for a separate pass, don't try to refine everything at once
+- IF: user disagrees with rewrite direction → adjust based on their feedback, they know the use case best

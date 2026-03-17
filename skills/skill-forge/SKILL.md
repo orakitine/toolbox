@@ -1,7 +1,7 @@
 ---
 name: skill-forge
 description: Creates, evaluates, and refines Claude Code skills, agents, and commands. Use when building new skills from scratch, auditing existing skills for quality, or cleaning up skill structure and naming.
-argument-hint: "[create|evaluate] [skill-name or path]"
+argument-hint: "[create|evaluate|refine] [skill-name or path]"
 allowed-tools:
   - Read
   - Write
@@ -25,9 +25,11 @@ PRINCIPLES_PATH: ${CLAUDE_SKILL_DIR}/reference/PRINCIPLES.md       # Creation pr
 1. **Parse Request**
    - Determine mode from user input or `$ARGUMENTS`
    - IF: "create", "new", "build" → Creation mode
-   - IF: "evaluate", "audit", "review", "check", "refine", "clean up", "improve" → Evaluation mode
+   - IF: "evaluate", "audit", "review", "check" → Evaluation mode
+   - IF: "refine", "rewrite", "modernize", "clean up", "improve", "migrate" → Refine mode
    - Example: "/skill-forge create browser" → Creation mode, skill named "browser"
    - Example: "/skill-forge evaluate doc-vault" → Evaluation mode on existing skill
+   - Example: "/skill-forge refine playwright-browser" → Refine mode, rewrite existing skill
 
 2. **Load Principles**
    - Read `${CLAUDE_SKILL_DIR}/reference/PRINCIPLES.md` for conventions and standards
@@ -38,7 +40,9 @@ PRINCIPLES_PATH: ${CLAUDE_SKILL_DIR}/reference/PRINCIPLES.md       # Creation pr
    - Based on mode and asset type, route to the appropriate cookbook
    - IF: Creation mode → determine asset type, route to creation cookbook
    - IF: Evaluation mode → route to evaluation cookbook
+   - IF: Refine mode → route to refine cookbook
    - Example: "create new agent for voice design" → `cookbook/create-agent.md`
+   - Example: "refine the old browser skill" → `cookbook/refine.md`
 
 ## Cookbook
 
@@ -58,6 +62,16 @@ PRINCIPLES_PATH: ${CLAUDE_SKILL_DIR}/reference/PRINCIPLES.md       # Creation pr
 - EXAMPLES:
   - "/skill-forge create agent for QA testing"
   - "build an agent that does security reviews"
+
+### Refine an Existing Skill
+
+- IF: User wants to rewrite, modernize, migrate, or improve an existing skill
+- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/refine.md`
+- EXAMPLES:
+  - "/skill-forge refine playwright-browser"
+  - "modernize the doc-vault skill"
+  - "clean up and rewrite quality-gate"
+  - "migrate this old command to a skill"
 
 ### Evaluate Existing Skill (Independent Review — Default)
 
