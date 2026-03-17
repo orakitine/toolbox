@@ -39,6 +39,7 @@ staging/                        # Work-in-progress before graduation
 - **browser** — Headless browser automation via playwright-cli. Core capability skill.
 - **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **browser-review** — Parallel UI validation. Discovers user stories, fans out browser-qa agents, aggregates pass/fail results.
+- **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
 
 ## Graduated Agents
 
