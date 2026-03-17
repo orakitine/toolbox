@@ -37,10 +37,10 @@ A 50-line cookbook with clear examples is leaner than a 20-line cookbook that re
 
 ### 4. Readability for Humans and AI
 
-- **Bold step names** for scannability (~1 token cost, large UX win)
-- Inline examples showing expected behavior immediately
-- Consistent formatting reducing cognitive load
-- Clear structure enabling quick navigation
+- **SKILL.md** is optimized for Claude — frontmatter, IF/THEN routing, workflow steps
+- **README.md** is optimized for humans — quick start, examples, options table, related skills
+- Both serve the same skill; neither duplicates the other. SKILL.md is the execution spec, README.md is the discovery entry point
+- Bold step names for scannability, inline examples, consistent formatting
 
 ### 5. One Skill, One Level of Abstraction
 

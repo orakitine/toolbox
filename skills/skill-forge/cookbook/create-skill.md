@@ -134,7 +134,14 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
         - "check code quality"
       ```
 
-12. **Create Supporting Files (if needed)**
+12. **Generate README.md**
+    - Create a human-facing README.md next to SKILL.md
+    - This is the discovery entry point for humans — NOT read by Claude during execution
+    - Include: skill name, one-liner, quick start, options table (from Variables), prerequisites, 2-4 example prompts, related skills/agents
+    - See `${CLAUDE_SKILL_DIR}/reference/directory-layout.md` for the standard README template
+    - Example: browser skill → README shows `/browser https://example.com` as quick start, lists HEADED/VISION options, notes playwright-cli prerequisite, links to browser-qa and browser-operator
+
+13. **Create Supporting Files (if needed)**
     - Consult `${CLAUDE_SKILL_DIR}/reference/directory-layout.md` for full layout options
     - `scripts/` — for deterministic operations (shell, python)
     - `templates/` — for structured output formats
@@ -142,7 +149,7 @@ Step-by-step workflow for creating a new Claude Code skill from scratch. Assumes
     - `prompts/` — for reusable sub-prompts
     - All internal references use `${CLAUDE_SKILL_DIR}` for portability
 
-13. **Validate the Skill**
+14. **Validate the Skill**
     - Read the complete skill end-to-end
     - Check against principles:
       - [ ] Frontmatter has explicit name, description, allowed-tools

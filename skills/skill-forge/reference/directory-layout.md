@@ -27,7 +27,7 @@ skills/<name>/
     summary_prompt.md
   cache/                # Runtime data storage (caches, indexes).
     cached-doc.md
-  README.md             # Optional. Human-facing docs, NOT read by Claude during execution.
+  README.md             # Recommended. Human-facing docs — NOT read by Claude during execution.
 ```
 
 ### What Each Directory Is For
@@ -41,6 +41,38 @@ skills/<name>/
 | `tools/` | Workflow calls them | CLI wrappers, shell helpers |
 | `prompts/` | Workflow injects them | Reusable sub-prompts for consistent behavior |
 | `cache/` | Skill reads/writes | Persistent data between invocations |
+
+### README.md — Human Discovery File
+
+Recommended for every skill. This is the human entry point — think `--help` or a man page. NOT read by Claude during skill execution; read by humans browsing the directory and by the `skill-guide` discovery skill.
+
+Standard sections:
+
+```markdown
+# <skill-name>
+
+<one-line description>
+
+## Quick Start
+
+<simplest invocation>
+
+## Options
+
+<table of Variables with defaults and descriptions>
+
+## Prerequisites
+
+<external dependencies>
+
+## Examples
+
+<2-4 example prompts showing common use cases>
+
+## Related
+
+<family members, dependency chain>
+```
 
 ### Rules
 

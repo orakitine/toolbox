@@ -106,7 +106,13 @@ OUTPUT_SUFFIX: -refined                     # Suffix appended to original dir na
      ```
    - IF: capabilities were lost unintentionally → restore them before proceeding
 
-10. **Finalize**
+10. **Generate or Update README.md**
+    - IF: original has no README.md → generate one from the rewritten SKILL.md
+    - IF: original has README.md → update it to reflect the rewritten skill
+    - Include: skill name, one-liner, quick start, options, prerequisites, examples, related skills/agents
+    - Example: refined browser skill → README shows new name, updated options table, prerequisite check note
+
+11. **Finalize**
     - Present the user with options:
       - **Replace**: delete original, rename refined to final name (e.g., `browser/`)
       - **Keep both**: leave original and refined side by side for further comparison

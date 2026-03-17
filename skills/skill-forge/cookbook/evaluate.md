@@ -49,7 +49,8 @@ AUTO_FIX: false                              # Whether to auto-fix issues (with 
    - CRITICAL: Forbidden sections present? (Quick Reference, separate Examples, Notes, Instructions, Success Criteria)
    - WARNING: Duplication between SKILL.md and cookbooks?
    - WARNING: Hardcoded paths instead of `${CLAUDE_SKILL_DIR}`?
-   - INFO: README.md present for human documentation?
+   - WARNING: README.md missing? (recommended for human discovery — quick start, options, examples, related skills)
+   - INFO: README.md present but missing standard sections? (quick start, options, examples, related)
    - Example: Found "## Quick Reference" section → CRITICAL: "Forbidden section. Merge content into Workflow."
 
 6. **Check Variables**
