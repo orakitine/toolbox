@@ -28,9 +28,8 @@ skills/<name>/SKILL.md          # Each skill gets its own directory
   cookbook/                      # Scenario-specific workflows
   reference/                    # Heavy reference material
   scripts/                      # Executable helpers
-agents/<name>/AGENT.md          # Agent configurations
+agents/<name>.md                # Agent configurations
 prompts/<name>.md               # Reusable prompts
-staging/                        # Work-in-progress before graduation
 ```
 
 ## Graduated Skills
@@ -53,11 +52,4 @@ staging/                        # Work-in-progress before graduation
 
 ## Staging
 
-Skills pulled from across devices (Mac global, Linux box, claude-code-lab) live in `staging/` until reviewed, renamed, and graduated into `skills/`.
-
-## Next Steps
-
-- Review and rename staged skills (browser, doc-vault, quality-gate, etc.)
-- Graduate them into skills/
-- Register each one via /registry add
-- Test the full flow: add → use → push → sync
+Staging migration complete. All skills have been reviewed, refined, and graduated (or retired). New skills should be prototyped in `claude-code-lab` and graduated directly to `skills/`.
