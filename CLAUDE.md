@@ -32,24 +32,20 @@ agents/<name>.md                # Agent configurations
 prompts/<name>.md               # Reusable prompts
 ```
 
-## Graduated Skills
+## Skills
 
-- **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands. Includes creation principles, directory layout reference, and evaluation workflow.
 - **browser** — Headless browser automation via playwright-cli. Core capability skill.
-- **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **browser-review** — Parallel UI validation. Discovers user stories, fans out browser-qa agents, aggregates pass/fail results.
-- **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
+- **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **doc-cache** — Transparent read-through cache for documentation lookups with expiration and garbage collection.
 - **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
+- **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands.
+- **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
 
-## Graduated Agents
+## Agents
 
-- **browser-operator** — General-purpose browser automation agent. Enables parallel browser sessions when spawned as subagent.
-- **browser-qa** — UI validation agent. Executes user stories against web apps with structured pass/fail reporting and screenshots.
-- **elevenlabs-operator** — Audio generation agent. Parallel-safe for batch audio tasks.
-- **elevenlabs-voice-designer** — Voice casting agent. Searches library, generates audition samples, returns structured recommendations.
-
-## Staging
-
-Staging migration complete. All skills have been reviewed, refined, and graduated (or retired). New skills should be prototyped in `claude-code-lab` and graduated directly to `skills/`.
+- **browser-operator** — General-purpose browser automation agent. Parallel-safe.
+- **browser-qa** — UI validation agent. Structured pass/fail reporting with screenshots.
+- **elevenlabs-operator** — Audio generation agent. Parallel-safe.
+- **elevenlabs-voice-designer** — Voice casting agent. Audition samples with structured recommendations.
