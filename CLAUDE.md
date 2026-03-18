@@ -40,6 +40,7 @@ staging/                        # Work-in-progress before graduation
 - **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **browser-review** — Parallel UI validation. Discovers user stories, fans out browser-qa agents, aggregates pass/fail results.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
+- **doc-cache** — Transparent read-through cache for documentation lookups with expiration and garbage collection.
 - **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
 
