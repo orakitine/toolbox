@@ -40,6 +40,7 @@ prompts/<name>.md               # Reusable prompts
 - **doc-cache** — Transparent read-through cache for documentation lookups with expiration and garbage collection.
 - **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
+- **gen-image** — Image generation and editing via AI models (Gemini/Imagen). Provider-agnostic design with bundled Python CLI.
 - **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
 
