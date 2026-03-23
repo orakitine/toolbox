@@ -49,4 +49,5 @@ prompts/<name>.md               # Reusable prompts
 - **browser-operator** — General-purpose browser automation agent. Parallel-safe.
 - **browser-qa** — UI validation agent. Structured pass/fail reporting with screenshots.
 - **elevenlabs-operator** — Audio generation agent. Parallel-safe.
+- **gen-image-operator** — Image generation and editing agent (Gemini/Imagen). Parallel-safe.
 - **elevenlabs-voice-designer** — Voice casting agent. Audition samples with structured recommendations.

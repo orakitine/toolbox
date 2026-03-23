@@ -36,6 +36,12 @@ Get your API key at: https://aistudio.google.com/apikey
 - `"remove the text from this screenshot"` — edits to clean up
 - `"what models are available?"` — lists models and capabilities
 
+## Related
+
+| Asset | Type | Relationship |
+|---|---|---|
+| gen-image-operator | agent (orange) | Depends on this — image generation/editing, parallel-safe |
+
 ## Adding Providers
 
 The skill is provider-agnostic. Each provider is a separate CLI script in the skill directory following a shared contract (subcommands, flags, output format). See `gemini-image.py` as the reference implementation.
