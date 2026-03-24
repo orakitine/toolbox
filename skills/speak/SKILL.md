@@ -4,6 +4,12 @@ description: >-
   Provider-agnostic text-to-speech output. Converts text to audio and plays it
   immediately. Falls back through available TTS providers (elevenlabs, macOS say).
   Use as a composable voice output primitive from any skill, agent, or workflow.
+  TRIGGER when: user says "say out loud", "say aloud", "announce", "read out",
+  "tell me out loud", or any phrasing that implies audible/voice output rather
+  than text. Also trigger when user says "say X" at the end of a task request
+  (e.g., "do X and when done say Done") — this means spoken output, not typed.
+  DO NOT TRIGGER when: "say" is used figuratively ("let's say we have...") or
+  means "write/type" in context.
 argument-hint: "[text to speak]"
 allowed-tools:
   - Bash
