@@ -52,3 +52,4 @@ prompts/<name>.md               # Reusable prompts
 - **elevenlabs-operator** — Audio generation agent. Parallel-safe.
 - **gen-image-operator** — Image generation and editing agent (Gemini/Imagen). Parallel-safe.
 - **elevenlabs-voice-designer** — Voice casting agent. Audition samples with structured recommendations.
+- **speak-narrator** — Narration agent. Digests content into spoken summaries via the speak skill.
