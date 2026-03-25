@@ -43,7 +43,7 @@ prompts/<name>.md               # Reusable prompts
 - **gen-image** — Image generation and editing via AI models (Gemini/Imagen). Provider-agnostic design with bundled Python CLI.
 - **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
-- **speak** — Provider-agnostic TTS output. Text in, audio out. Falls back through elevenlabs → macOS say.
+- **speak** — Provider-agnostic TTS output with audio caching. Text in, audio out. Caches generated audio to skip redundant API calls on repeated phrases. Falls back through elevenlabs → macOS say.
 
 ## Agents
 
