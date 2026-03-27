@@ -41,6 +41,7 @@ prompts/<name>.md               # Reusable prompts
 - **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
 - **gen-image** — Image generation and editing via AI models (Gemini/Imagen). Provider-agnostic design with bundled Python CLI.
+- **menu-app** — Converts restaurant menu files (PDF, image, Word, HTML, MD) into self-contained single-page HTML ordering apps with search, cart, and order text export.
 - **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
 - **speak** — Provider-agnostic TTS output with audio caching. Text in, audio out. Caches generated audio to skip redundant API calls on repeated phrases. Falls back through elevenlabs → macOS say.
