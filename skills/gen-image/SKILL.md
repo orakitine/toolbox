@@ -21,7 +21,7 @@ API calls consume Google AI credits. Imagen 4 requires billing. Gemini Flash has
 
 ## Variables
 
-GI_CLI: python3 ${CLAUDE_SKILL_DIR}/gemini-image.py   # Path to the Gemini image CLI
+GI_CLI: python3 ./gemini-image.py                     # Path to the Gemini image CLI
 DEFAULT_CREATE_MODEL: gemini-3-pro-image-preview      # Nano Banana Pro. Best quality + character/text fidelity. Override with --model (e.g. imagen-4.0-generate-001 for cheaper batches)
 DEFAULT_EDIT_MODEL: gemini-2.5-flash-image             # Nano Banana. Default for edits
 DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override with --size
@@ -30,7 +30,7 @@ DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override
 
 1. **Check Prerequisites**
    - IF: `which python3` fails → report "python3 not found" and stop
-   - IF: `${CLAUDE_SKILL_DIR}/gemini-image.py` not found → report "gemini-image CLI missing" and stop
+   - IF: `./gemini-image.py` not found → report "gemini-image CLI missing" and stop
    - IF: API key not available → run `<GI_CLI> models` as a lightweight auth check. If it fails with "GEMINI_API_KEY not set", stop and tell the user:
      > GEMINI_API_KEY is not configured. Set it in one of:
      > - **Project-level:** add `GEMINI_API_KEY=your-key` to `./.env`

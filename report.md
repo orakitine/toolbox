@@ -226,10 +226,8 @@ Same issue — implementation prefix. Would need to become `audio-operator` and 
 ### README.md Policy — RESOLVED
 All remaining README.md files removed from skills. Skill-forge principles updated to discourage README.md: SKILL.md is the single source of truth for both human and model discovery. README.md files duplicated content and drifted, confusing agents.
 
-### `${CLAUDE_SKILL_DIR}` vs Relative Paths
-All occurrences in skill bodies were replaced with relative paths (`./scripts/...`). However, some Variables sections still reference `${CLAUDE_SKILL_DIR}` for directory definitions (e.g., browser-workflow's WORKFLOWS_DIR). The question is whether variables are "body" (should use relative paths) or "configuration" (harness variable is acceptable).
-
-**My judgment**: I left `${CLAUDE_SKILL_DIR}` in variable definitions where the variable is specifically about locating a harness-specific directory. I replaced it everywhere else. This felt like the right tradeoff — harness vars in config, relative paths in procedures.
+### `${CLAUDE_SKILL_DIR}` vs Relative Paths — RESOLVED
+All `${CLAUDE_SKILL_DIR}` usages replaced with `./` relative paths across all SKILL.md files (variables and body). Skill-forge claude-code.md updated to explicitly discourage `${CLAUDE_SKILL_DIR}` in favor of relative paths.
 
 ### `model` Field in Agent Frontmatter
 All agents have a `model:` field (typically `sonnet` or `opus`). This isn't part of the expected agent structure template in create-agent.md, but it's a consistent repo convention. Agents left it in place. Worth noting it's a Claude Code extension field, not portable.

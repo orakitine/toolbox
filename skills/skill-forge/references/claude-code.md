@@ -68,12 +68,12 @@ A skill that only reads code shouldn't have `Write`.
 | Feature | Syntax | Purpose |
 |---|---|---|
 | User arguments | `$ARGUMENTS`, `$0`, `$1` | Access what the user typed after the slash command |
-| Skill directory | `${CLAUDE_SKILL_DIR}` | Claude Code-specific path variable (prefer relative paths for portability) |
+| Skill directory | `${CLAUDE_SKILL_DIR}` | Claude Code-specific path variable — avoid in skill body, use relative paths (`./scripts/foo.py`) instead |
 | Shell injection | `` !`command` `` | Execute shell at prompt-load time, inject stdout before Claude sees it |
 
 **Shell injection** runs before Claude sees the skill — not at execution time. Use for injecting dynamic context: `` !`git diff --cached` `` injects the current staged diff. Use sparingly — output consumes tokens and runs every activation.
 
-**Portability note:** `${CLAUDE_SKILL_DIR}` only works in Claude Code. For portable skills, use relative paths (`./scripts/check.sh`). If you must use `${CLAUDE_SKILL_DIR}`, know that the skill body won't work as-is in other harnesses.
+**Portability note:** `${CLAUDE_SKILL_DIR}` only works in Claude Code. Always use relative paths (`./scripts/check.sh`) in SKILL.md body and variables. The model resolves relative paths from skill context reliably, and they work across harnesses.
 
 ---
 
@@ -142,7 +142,7 @@ When evaluating skills for Claude Code compliance, check these IN ADDITION to th
 - No README.md present? (README.md is discouraged — it duplicates SKILL.md and confuses agents. SKILL.md is the single source of truth for both humans and models.)
 
 ### Distribution
-- Hardcoded paths instead of `${CLAUDE_SKILL_DIR}` or relative paths?
+- Hardcoded absolute paths instead of relative paths? (`${CLAUDE_SKILL_DIR}` counts — use `./` relative paths)
 
 ---
 

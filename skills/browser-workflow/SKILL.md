@@ -14,7 +14,7 @@ Higher-order skill that loads saved browser automation workflows from a director
 
 ## Variables
 
-WORKFLOWS_DIR: ${CLAUDE_SKILL_DIR}/workflows          # Directory containing workflow .md files
+WORKFLOWS_DIR: ./workflows                            # Directory containing workflow .md files
 OUTPUT_DIR: ./browser-automations                     # Where run artifacts are saved
 
 ## Workflow

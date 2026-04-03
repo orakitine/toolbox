@@ -51,7 +51,7 @@ REGISTRY_YAML: ~/.claude/skills/registry/registry.yaml    # Registry catalog for
 ### Inventory — What's Available
 
 - IF: User wants to see all installed skills and agents
-- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/inventory.md`
+- THEN: Read and execute `./cookbook/inventory.md`
 - EXAMPLES:
   - "/skill-guide"
   - "what skills do I have?"
@@ -61,7 +61,7 @@ REGISTRY_YAML: ~/.claude/skills/registry/registry.yaml    # Registry catalog for
 ### Detail — Tell Me About This Skill
 
 - IF: User asks about a specific skill, agent, or family
-- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/detail.md`
+- THEN: Read and execute `./cookbook/detail.md`
 - EXAMPLES:
   - "/skill-guide browser"
   - "how do I use the quality-gate skill?"
@@ -71,7 +71,7 @@ REGISTRY_YAML: ~/.claude/skills/registry/registry.yaml    # Registry catalog for
 ### Recommend — What Should I Use For This Task
 
 - IF: User describes a task and wants to know which skill to use
-- THEN: Read and execute `${CLAUDE_SKILL_DIR}/cookbook/recommend.md`
+- THEN: Read and execute `./cookbook/recommend.md`
 - EXAMPLES:
   - "how do I test my UI?"
   - "what's the best way to automate browser tasks?"

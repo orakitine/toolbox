@@ -59,7 +59,7 @@ allowed-tools:
    - Example: Russian catering with yellow-toned PDF → warm brown/sienna accent on cream background
 
 4. **Generate the HTML App**
-   - Read and follow `${CLAUDE_SKILL_DIR}/cookbook/html-app-spec.md` for the complete HTML generation spec
+   - Read and follow `./cookbook/html-app-spec.md` for the complete HTML generation spec
    - Write a single self-contained HTML file — all CSS and JS inline, zero external dependencies
    - The spec covers: header with contacts, search/filters, menu card grid, cart system with localStorage, order text export, call/navigate buttons
    - Example: 90-item Russian catering menu → single HTML file with 5 category sections, filter pills for meat/fish/veg/chicken, slide-out cart, copy-to-clipboard order text

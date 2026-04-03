@@ -9,7 +9,7 @@ allowed-tools:
 
 ## Variables
 
-EL_CLI: python3 ${CLAUDE_SKILL_DIR}/scripts/el.py     # Path to the el CLI wrapper
+EL_CLI: python3 ./scripts/el.py                       # Path to the el CLI wrapper
 DEFAULT_VOICE: Aa6nEBJJMKJwJkCx8VU2                  # Quentin — calm, male, narrator. Override with --voice
 DEFAULT_MODEL: eleven_multilingual_v2                 # Options: eleven_v3, eleven_multilingual_v2, eleven_flash_v2_5
 OUTPUT_DIR: ./audio                                   # Where generated audio files are saved
