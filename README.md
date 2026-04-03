@@ -14,8 +14,11 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 | [doc-cache](skills/doc-cache/) | Transparent read-through cache for documentation lookups |
 | [elevenlabs](skills/elevenlabs/) | TTS, sound effects, music generation, audio processing |
 | [fork-terminal](skills/fork-terminal/) | Fork terminal sessions with CLI or agentic coding tools |
+| [gen-image](skills/gen-image/) | Image generation and editing via AI models (Gemini/Imagen) |
+| [menu-app](skills/menu-app/) | Convert restaurant menus to self-contained HTML ordering apps |
 | [skill-forge](skills/skill-forge/) | Create, evaluate, and refine skills and agents |
 | [skill-guide](skills/skill-guide/) | Discover and explain installed skills and agents |
+| [speak](skills/speak/) | Provider-agnostic TTS output with audio caching |
 
 ## Agents
 
@@ -25,6 +28,8 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 | [browser-qa](agents/browser-qa.md) | UI validation with structured pass/fail reporting |
 | [elevenlabs-operator](agents/elevenlabs-operator.md) | Audio generation, parallel-safe |
 | [elevenlabs-voice-designer](agents/elevenlabs-voice-designer.md) | Voice casting with audition samples |
+| [gen-image-operator](agents/gen-image-operator.md) | Image generation and editing, parallel-safe |
+| [speak-narrator](agents/speak-narrator.md) | Narration agent, delivers spoken summaries via speak |
 
 ## Usage
 
