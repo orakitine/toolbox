@@ -7,8 +7,6 @@ allowed-tools:
   - Read
 ---
 
-# Purpose
-
 Generate or edit images via AI image models. Generic — no style or domain knowledge. Higher-order skills build prompts and call the CLI scripts bundled here.
 
 ## Prerequisites
@@ -19,7 +17,7 @@ Generate or edit images via AI image models. Generic — no style or domain know
   - Global `~/.claude/.env` (for global installs): `echo 'GEMINI_API_KEY=your-key' >> ~/.claude/.env`
   - Or export directly: `export GEMINI_API_KEY=your-key`
 
-**Note:** This skill makes API calls that consume Google AI credits. Imagen 4 requires billing. Gemini Flash has a free tier but is rate-limited. See [Google AI pricing](https://ai.google.dev/pricing) for details.
+API calls consume Google AI credits. Imagen 4 requires billing. Gemini Flash has a free tier but is rate-limited. See [Google AI pricing](https://ai.google.dev/pricing).
 
 ## Variables
 
@@ -43,13 +41,14 @@ DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override
    - Example: python3 found, gemini-image.py exists, API key valid → proceed
    - Tool: Bash
 
-2. **List Available Models**
-   - Check which models are available and their capabilities
-   - IF: checking local registry → `<GI_CLI> models`
-   - IF: checking what's live on the API → `<GI_CLI> models --remote` (requires API key)
-   - Example: `<GI_CLI> models` → lists curated local models with create/edit support
-   - Example: `<GI_CLI> models --remote` → queries Gemini API for all available models
-   - Example: `<GI_CLI> models --json` → raw JSON for scripting
+2. **Route Request**
+   - IF: user asks to create an image → go to step 3
+   - IF: user asks to edit an existing image → go to step 4
+   - IF: user asks about available models → run `<GI_CLI> models` and report results
+   - IF: user asks to check remote API models → run `<GI_CLI> models --remote`
+   - Example: "generate a sunset painting" → step 3 (create)
+   - Example: "make the sky orange in photo.png" → step 4 (edit)
+   - Example: "what models can I use?" → `<GI_CLI> models`
    - Tool: Bash `<GI_CLI> models [--remote] [--json]`
 
 3. **Create Image (Text to Image)**
@@ -59,7 +58,7 @@ DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override
    - IF: no `--output` → saves as `output.png` in current directory
    - IF: safety filter triggers (empty response) → rephrase prompt to be more specific, less ambiguous
    - IF: rate limit (429) → wait and retry. Imagen 4 has generous limits; Gemini Flash free tier is stricter
-   - Build descriptive, specific prompts. The more detail, the better the result.
+   - Enrich vague prompts with specific details (style, lighting, composition, colors) before calling the API
    - Example: `<GI_CLI> create "a watercolor painting of a mountain lake at sunset" --output lake.png`
    - Example: `<GI_CLI> create "pixel art treasure chest, 32x32 sprite" --size 1024x1024 --output chest.png`
    - Example: `<GI_CLI> create "photo of a red sports car" --model gemini-2.0-flash-exp --output car.png`
@@ -83,12 +82,7 @@ DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override
    - Example: Read output.png → spots extra finger → `<GI_CLI> edit "remove the extra finger on the left hand" --input output.png --output fixed.png`
    - Tool: Read (to view image), then Bash (to edit/recreate)
 
-## Common Sizes
+## Reference
 
-| Use case | Size | Aspect |
-|----------|------|--------|
-| Landscape / cover art | `1280x960` | 4:3 |
-| Portrait | `960x1280` | 3:4 |
-| Square / icon | `1024x1024` | 1:1 |
-| Widescreen | `1536x864` | 16:9 |
-| Mobile / story | `864x1536` | 9:16 |
+- IF: need full CLI flags, supported sizes, or model details → read `reference/commands.md`
+- IF: need to add a new provider → see `gemini-image.py` as the reference implementation contract
