@@ -1,6 +1,8 @@
-# Create an Agent
+# Create an Agent (Claude Code)
 
-Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINCIPLES.md is already loaded (SKILL.md Step 2).
+> **Harness-specific:** This workflow is for Claude Code's agent system (`.claude/agents/`). Other harnesses may implement agent/persona concepts differently. The universal skill format does not include agents — they are a Claude Code orchestration feature.
+
+Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINCIPLES.md and `./claude-code.md` are already loaded.
 
 ## Workflow
 
@@ -20,30 +22,39 @@ Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINC
    - Validate: does searching by prefix find this agent alongside its skill?
 
 3. **Write the Description**
-   - Apply description rules from Principles (see "Description: The 100-Token Pitch")
+   - Apply description rules from Principles
+   - Hybrid voice: third-person WHAT + imperative WHEN
    - Focus on the ROLE, not just the tools
-   - Example: "UI validation agent that executes user stories against web apps and reports pass/fail results with screenshots at every step."
+   - Example: "UI validation agent that executes user stories against web apps and reports pass/fail results with screenshots. Use for QA and acceptance testing."
    - Bad example: "Agent that uses Playwright"
 
 4. **Define Allowed Tools**
-   - Apply allowed-tools rules from Principles (see "Allowed-Tools Selection")
+   - Apply least privilege principle
    - Agents get their own permissions, separate from the skill they serve
    - Example: browser-qa → `Read`, `Glob`, `Bash` (no Write — QA doesn't modify)
 
-5. **Write the Agent Definition**
+5. **Choose a Color**
+   - See color conventions in `./claude-code.md`
+   - Match color to role type for at-a-glance recognition
+   - Example: QA agent → `green`, operator → `orange`, reviewer → `purple`
+
+6. **Write the Agent Definition**
+   - Create file at `.claude/agents/<name>.md`
    - Structure:
      ```markdown
      ---
      name: agent-name
-     description: What role this agent plays, third person, WHAT + WHEN
+     description: >-
+       What role this agent plays, WHAT + WHEN.
      allowed-tools:
        - Tool1
        - Tool2
+     color: green
      ---
 
      # Role
 
-     [1-2 paragraphs: what this agent does, how it behaves, its persona]
+     [1-2 paragraphs: what this agent does, how it behaves]
 
      ## Constraints
 
@@ -52,60 +63,26 @@ Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINC
 
      ## Skills
 
-     [Which skills this agent has access to or should invoke]
-     [How it uses them in context]
-     ```
-   - Example:
-     ```markdown
-     ---
-     name: browser-qa
-     description: >-
-       UI validation agent that executes user stories against web apps
-       and reports pass/fail with screenshots. Use for QA, acceptance
-       testing, and UI verification.
-     allowed-tools:
-       - Read
-       - Glob
-       - Bash
-     ---
-
-     # Role
-
-     You are a QA tester. Given a user story and a URL, you
-     systematically validate each acceptance criterion against the
-     live application. You take screenshots at every step and report
-     pass/fail results with evidence.
-
-     ## Constraints
-
-     - NEVER modify application code or data
-     - ALWAYS take a screenshot before and after each action
-     - Report ALL failures, don't stop at the first one
-     - If a step is ambiguous, flag it rather than guessing
-
-     ## Skills
-
-     - Uses the `browser` skill for all browser automation
-     - Follows browser skill's workflow for page interaction
+     [Which skills this agent uses and how]
      ```
 
-6. **Wire Up Composition (if applicable)**
+7. **Wire Up Composition (if applicable)**
    - IF: this agent is used by a skill → update the skill's frontmatter:
      ```yaml
      context: fork
-     agent: browser-qa
+     agent: agent-name
      ```
    - IF: this agent is standalone → no wiring needed
-   - Example: browser skill's SKILL.md gets `context: fork` + `agent: browser-qa`
 
-7. **Validate the Agent**
+8. **Validate the Agent**
    - Check against principles:
      - [ ] Name follows `<capability>-<role>` pattern
      - [ ] Name prefix matches related skill family
-     - [ ] Description is third-person, specific, includes trigger words
+     - [ ] Description is specific, includes trigger words
      - [ ] Role section clearly defines persona and behavior
      - [ ] Constraints are specific and actionable (not vague "be careful")
      - [ ] Allowed-tools follows least privilege
+     - [ ] Color matches role convention
      - [ ] Composition wiring is correct (if applicable)
 
 ## Error Handling
