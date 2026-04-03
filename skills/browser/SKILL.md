@@ -44,7 +44,7 @@ SCREENSHOTS_DIR: ./screenshots    # Where screenshots are saved
 
 3. **Interact with Elements**
    - Use refs from snapshot to click, fill, type, select, hover
-   - For full command list: see `${CLAUDE_SKILL_DIR}/reference/commands.md`
+   - For full command list: see `./reference/commands.md`
    - Example: `playwright-cli -s=mystore-checkout click e12` → clicks element
    - Example: `playwright-cli -s=mystore-checkout fill e15 "test@example.com"` → fills input
    - Example: `playwright-cli -s=mystore-checkout press Enter` → presses key
@@ -54,8 +54,8 @@ SCREENSHOTS_DIR: ./screenshots    # Where screenshots are saved
 4. **Take Screenshots**
    - Capture current page state as PNG
    - IF: specific filename needed → use `--filename=<path>`
-   - Example: `playwright-cli -s=mystore-checkout screenshot --filename=./screenshots/checkout-step1.png`
-   - Tool: Bash `playwright-cli -s=<session-name> screenshot [--filename=<path>]`
+   - Example: `playwright-cli -s=mystore-checkout screenshot --filename=<SCREENSHOTS_DIR>/checkout-step1.png`
+   - Tool: Bash `playwright-cli -s=<session-name> screenshot [--filename=<SCREENSHOTS_DIR>/<name>.png]`
 
 5. **Close Session**
    - ALWAYS close the session when done — this is not optional
