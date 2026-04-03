@@ -32,7 +32,7 @@ DEFAULT_SPEED: 1.15                            # ElevenLabs speech speed multipl
 PLAYBACK_CMD: afplay                          # macOS audio playback command
 AUTO_CLEANUP: true                            # Delete temp audio files after playback
 CACHE_ENABLED: true                           # Enable TTS audio caching
-CACHE_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/speak-cache.py   # Cache management CLI
+CACHE_TOOL: python3 ./scripts/speak-cache.py  # Cache management CLI
 MAX_CACHE_SIZE_MB: 100                        # Max cache size in MB before LRU eviction
 
 ## Workflow
@@ -46,10 +46,10 @@ MAX_CACHE_SIZE_MB: 100                        # Max cache size in MB before LRU 
 
 2. **Detect Available Providers**
    - Walk PROVIDER_ORDER and check availability of each:
-   - **elevenlabs**: check if elevenlabs skill is installed by looking for SKILL.md, then check if API key is configured by running `python3 <elevenlabs-skill-dir>/scripts/el.py models` — if it returns successfully, provider is available
+   - **elevenlabs**: find the elevenlabs skill directory by running `find ~/.claude/skills -name SKILL.md -path '*/elevenlabs/*' 2>/dev/null | head -1 | xargs dirname` (also check `.agents/skills/`). Then verify the API key by running `python3 <elevenlabs-dir>/scripts/el.py models` — if it returns successfully, provider is available.
    - **say**: check if `say` command exists (`which say`)
    - IF: no providers available → report error: "No TTS providers available. Install the elevenlabs skill or use macOS."
-   - Example: elevenlabs key configured → use elevenlabs. Key missing, macOS → use say. Neither → error.
+   - Example: `find ~/.claude/skills -name SKILL.md -path '*/elevenlabs/*'` returns a path → run `python3 <that-dir>/scripts/el.py models` → success → elevenlabs available. API key missing → fall through to `which say` → found → use say.
    - Tool: Bash
 
 3. **Check Cache**
@@ -62,15 +62,17 @@ MAX_CACHE_SIZE_MB: 100                        # Max cache size in MB before LRU 
    - Do NOT delete the cached file — it is managed by the cache
    - Skip to step 6 (Report), noting playback was from cache
    - IF output is `MISS`: continue to step 4
+   - Example: `python3 ./scripts/speak-cache.py find "build complete" --voice pNInz6obpgDQGcFmaJgB` → `HIT /Users/me/.claude/speak-cache/audio/a1b2c3.mp3` → play it, bump, done. Or → `MISS` → continue to Generate Audio.
    - Tool: Bash
 
 4. **Generate Audio**
    - First, create a unique temp file: `TMPFILE=$(mktemp /tmp/speak_XXXXXX.mp3)`
-   - **elevenlabs**: `python3 <elevenlabs-skill-dir>/scripts/el.py tts "<text>" --voice <DEFAULT_VOICE> --model <DEFAULT_MODEL> --speed <DEFAULT_SPEED> --out $TMPFILE`
+   - **elevenlabs**: `python3 <elevenlabs-dir>/scripts/el.py tts "<text>" --voice <DEFAULT_VOICE> --model <DEFAULT_MODEL> --speed <DEFAULT_SPEED> --out $TMPFILE`
    - IF: TTS command fails (voice 404, quota exceeded, etc.) → `rm -f $TMPFILE`, fall through to next provider in chain
    - **say** (macOS fallback): `say "<text>"`
    - IF: text contains special characters → write to temp file and use `say -f /tmp/speak_input.txt`
    - IF: provider is say → play is immediate, skip to step 6 (Report)
+   - Example: `TMPFILE=$(mktemp /tmp/speak_XXXXXX.mp3) && python3 <elevenlabs-dir>/scripts/el.py tts "hello world" --voice pNInz6obpgDQGcFmaJgB --out $TMPFILE` → file created → continue to Cache and Play. If fails → `rm -f $TMPFILE` → try `say "hello world"`.
    - Tool: Bash
 
 5. **Cache and Play**
@@ -79,10 +81,7 @@ MAX_CACHE_SIZE_MB: 100                        # Max cache size in MB before LRU 
      `<CACHE_TOOL> store "<text>" --voice <DEFAULT_VOICE> --model <DEFAULT_MODEL> --speed <DEFAULT_SPEED> --file $TMPFILE`
    - Play audio: `<PLAYBACK_CMD> $TMPFILE`
    - IF: AUTO_CLEANUP is true → `rm $TMPFILE` (cache has its own copy)
-   - Example: `TMPFILE=$(mktemp /tmp/speak_XXXXXX.mp3)`
-     then: `python3 <elevenlabs-skill-dir>/scripts/el.py tts "done" --voice pNInz6obpgDQGcFmaJgB --speed 1.15 --out $TMPFILE`
-     then: `<CACHE_TOOL> store "done" --file $TMPFILE --voice pNInz6obpgDQGcFmaJgB --speed 1.15`
-     then: `afplay $TMPFILE && rm $TMPFILE`
+   - Example: `python3 ./scripts/speak-cache.py store "done" --file $TMPFILE --voice pNInz6obpgDQGcFmaJgB --speed 1.15` → `STORED a1b2c3` → then `afplay $TMPFILE && rm $TMPFILE`
    - Tool: Bash
 
 6. **Report**
