@@ -6,8 +6,6 @@ allowed-tools:
   - Bash
   - Read
 color: orange
-skills:
-  - gen-image
 ---
 
 # Role

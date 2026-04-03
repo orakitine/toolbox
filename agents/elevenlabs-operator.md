@@ -11,8 +11,6 @@ allowed-tools:
   - Write
   - Glob
 color: orange
-skills:
-  - elevenlabs
 ---
 
 # Role

@@ -10,8 +10,6 @@ allowed-tools:
   - Read
 model: opus
 color: cyan
-skills:
-  - elevenlabs
 ---
 
 # Role

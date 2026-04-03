@@ -11,8 +11,6 @@ allowed-tools:
   - Read
   - Glob
 color: cyan
-skills:
-  - speak
 ---
 
 # Role

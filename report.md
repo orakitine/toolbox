@@ -235,5 +235,5 @@ All agents have a `model:` field (typically `sonnet` or `opus`). This isn't part
 ### Cross-Skill Dependencies
 The `speak` skill discovers and calls the `elevenlabs` skill at runtime via a hardcoded `~/.claude/skills` path. This is fragile if the user's skill directory changes. A more robust discovery mechanism (registry query, env var) would improve this, but that's a design decision beyond a simple fix.
 
-### `skills` Frontmatter Field in Agents
-Several agents have a `skills:` field in frontmatter listing their skill dependencies. This isn't in the agentskills.io spec or the create-agent.md template, but it's a consistent repo convention. Agents were left as-is since it's additive and not harmful.
+### `skills` Frontmatter Field in Agents — RESOLVED
+Removed `skills:` from all 6 agent frontmatters. Dependencies are declared in `registry.yaml` only (via `requires:`). Updated registry's `add.md` to detect deps from body content instead of frontmatter.
