@@ -139,8 +139,7 @@ When evaluating skills for Claude Code compliance, check these IN ADDITION to th
 - For agents: `color` field present? Matches role convention?
 
 ### Structure
-- README.md present? (Claude Code's `skill-guide` reads these for human discovery)
-- README.md has standard sections? (quick start, options, examples, related)
+- No README.md present? (README.md is discouraged — it duplicates SKILL.md and confuses agents. SKILL.md is the single source of truth for both humans and models.)
 
 ### Distribution
 - Hardcoded paths instead of `${CLAUDE_SKILL_DIR}` or relative paths?
@@ -168,7 +167,8 @@ When creating skills for Claude Code, add these steps after the universal workfl
    - IF: skill delegates to an agent → add `context: fork` and `agent: <name>` to frontmatter
    - IF: skill takes arguments → add `argument-hint: "[what-goes-here]"`
 
-4. **Generate README.md**
-   - Create a human-facing README.md next to SKILL.md
-   - This is the discovery entry point — read by humans and by `skill-guide`
-   - Include: skill name, one-liner, quick start, options table, prerequisites, 2-4 example prompts, related skills/agents
+4. **Verify No README.md**
+   - Do NOT create a README.md next to SKILL.md
+   - README.md duplicates SKILL.md content and drifts over time, confusing agents
+   - SKILL.md is the single source of truth for both human and model discovery
+   - IF: existing README.md found → remove it

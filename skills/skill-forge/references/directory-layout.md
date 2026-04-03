@@ -76,7 +76,6 @@ Claude Code recognizes additional directories and concepts beyond the universal 
     summary_prompt.md
   cache/                # CC extension: runtime data storage between invocations
     cached-doc.md
-  README.md             # CC convention: human-facing docs for skill-guide discovery
 ```
 
 | Directory | Purpose |
@@ -85,6 +84,6 @@ Claude Code recognizes additional directories and concepts beyond the universal 
 | `prompts/` | Reusable sub-prompts for consistent behavior |
 | `cache/` | Persistent data between invocations (may be `.gitignore`d) |
 
-**README.md** is a Claude Code convention for human discovery — read by humans browsing the directory and by the `skill-guide` skill. Standard sections: skill name, one-liner, quick start, options, prerequisites, examples, related skills.
+**No README.md.** SKILL.md is the single source of truth for both human and model discovery. README.md files duplicate SKILL.md content and drift over time, confusing agents. If a skill needs human-facing documentation beyond what SKILL.md provides, that's a sign SKILL.md needs improvement.
 
 Claude Code also has **agents** (`.claude/agents/<name>.md`) and **commands** (`.claude/commands/`, legacy — prefer skills). These are covered when claude-code.md is pre-loaded by SKILL.md.
