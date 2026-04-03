@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-CACHE_DIR = Path(os.environ.get("CACHE_DIR", str(Path.home() / ".claude" / "doc-cache")))
+CACHE_DIR = Path(os.environ.get("CACHE_DIR", str(Path.home() / ".claude" / "doc-cache" / "cache")))
 MAX_AGE = int(os.environ.get("MAX_AGE_DAYS", "14"))
 
 

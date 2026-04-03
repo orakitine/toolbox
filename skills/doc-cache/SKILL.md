@@ -1,6 +1,13 @@
 ---
 name: doc-cache
-description: Transparent read-through cache for documentation lookups. Checks cache before WebFetch, caches results with expiration, garbage collects stale entries. Use automatically when fetching docs, API references, or technical documentation.
+description: >-
+  Transparent read-through cache for documentation lookups. Checks cache
+  before WebFetch, caches results with expiration, garbage collects stale
+  entries.
+  TRIGGER when: fetching docs, API references, technical documentation,
+  or user asks to look up library/framework usage.
+  DO NOT TRIGGER when: user provides inline code or docs directly, or
+  the information is already in context.
 argument-hint: "[topic | clean | list | stats]"
 allowed-tools:
   - Bash
@@ -12,16 +19,12 @@ allowed-tools:
 
 # Purpose
 
-Transparent caching layer for documentation lookups. Before fetching docs from the web, check the cache. On miss or expiry, fetch live and cache the result. Saves compute, tokens, and time on repeated lookups.
-
-## Prerequisites
-
-- `python3` must be available in PATH (stdlib only)
+Transparent caching layer for documentation lookups. Before fetching docs from the web, check the cache. On miss or expiry, fetch live and cache the result. Saves tokens and time on repeated lookups. Requires `python3` in PATH (stdlib only).
 
 ## Variables
 
-CACHE_DIR: ~/.claude/doc-cache/cache                              # Where cached docs live
-CACHE_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/cache.py   # Cache management CLI
+CACHE_DIR: ~/.claude/doc-cache/cache                        # Where cached docs live
+CACHE_TOOL: python3 ./scripts/cache.py                      # Cache management CLI (relative to skill dir)
 MAX_AGE_DAYS: 14                                            # Cache expiration in days
 
 ## Workflow
