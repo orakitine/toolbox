@@ -203,16 +203,7 @@ These patterns work across any harness because they're just well-structured mark
 
 ### Skill Discovery Paths
 
-Harnesses scan these directories for skills:
-
-| Scope | Path | Purpose |
-|---|---|---|
-| Project (interop) | `<project>/.agents/skills/` | Cross-client, any harness finds these |
-| Project (client-specific) | `<project>/.<client>/skills/` | Only that client finds these |
-| User (interop) | `~/.agents/skills/` | Cross-client, user-level |
-| User (client-specific) | `~/.<client>/skills/` | Only that client, user-level |
-
-For maximum portability, prefer `.agents/skills/`. Use client-specific paths only when the skill genuinely depends on harness features.
+For maximum portability, place skills in `.agents/skills/` — the widely adopted cross-client convention. Use harness-specific paths (e.g., `.claude/skills/`) only when the skill genuinely depends on harness features.
 
 ---
 

@@ -87,4 +87,4 @@ Claude Code recognizes additional directories and concepts beyond the universal 
 
 **README.md** is a Claude Code convention for human discovery — read by humans browsing the directory and by the `skill-guide` skill. Standard sections: skill name, one-liner, quick start, options, prerequisites, examples, related skills.
 
-Claude Code also has **agents** (`.claude/agents/<name>.md`) and **commands** (`.claude/commands/`, legacy — prefer skills). See `./claude-code.md` for details.
+Claude Code also has **agents** (`.claude/agents/<name>.md`) and **commands** (`.claude/commands/`, legacy — prefer skills). These are covered when claude-code.md is pre-loaded by SKILL.md.

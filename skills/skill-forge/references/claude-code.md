@@ -114,39 +114,6 @@ Agents support a `color` field in frontmatter for visual identification in the C
 | `red` | destructive / deploy (caution) | deploy-agent |
 | `cyan` | creative / generation | voice-designer |
 
-### Agent Definition Format
-
-Agent files live in `.claude/agents/<name>.md`:
-
-```markdown
----
-name: browser-qa
-description: >-
-  UI validation agent that executes user stories against web apps
-  and reports pass/fail with screenshots. Use for QA and acceptance testing.
-allowed-tools:
-  - Read
-  - Glob
-  - Bash
-color: green
----
-
-# Role
-
-You are a QA tester. Given a user story and a URL, you systematically
-validate each acceptance criterion against the live application.
-
-## Constraints
-
-- NEVER modify application code or data
-- ALWAYS take a screenshot before and after each action
-- Report ALL failures, don't stop at the first one
-
-## Skills
-
-- Uses the `browser` skill for all browser automation
-```
-
 ### Skill Composition via Registry
 
 Use the registry's `requires` field (in `registry.yaml`, not SKILL.md frontmatter) to declare composition:
