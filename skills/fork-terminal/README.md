@@ -12,7 +12,7 @@ Fork a terminal session to a new window with a command or agentic coding tool.
 
 | Variable | Default | Description |
 |---|---|---|
-| FORK_TOOL | python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py | Terminal forking script |
+| FORK_TOOL | python3 ./scripts/fork_terminal.py | Terminal forking script |
 
 ## Prerequisites
 

@@ -42,8 +42,16 @@ def fork_terminal(command: str) -> str:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: fork_terminal.py <command...>", file=sys.stderr)
-        sys.exit(1)
+    if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+        print("Usage: fork_terminal.py <command...>")
+        print()
+        print("Open a new terminal window and run <command> in it.")
+        print("Supports macOS (Terminal.app via AppleScript) and Windows (cmd).")
+        print()
+        print("Exit codes:")
+        print("  0  Terminal forked successfully")
+        print("  1  Missing arguments, unsupported platform, or fork failed")
+        sys.exit(0 if len(sys.argv) > 1 else 1)
     result = fork_terminal(" ".join(sys.argv[1:]))
     print(result)
+    sys.exit(0 if result.startswith("Terminal forked") else 1)

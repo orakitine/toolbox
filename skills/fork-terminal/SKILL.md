@@ -19,7 +19,7 @@ Open a new terminal window and run a command in it. Supports raw CLI commands an
 
 ## Variables
 
-FORK_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py    # Terminal forking script
+FORK_TOOL: python3 ./scripts/fork_terminal.py    # Terminal forking script
 
 ## Workflow
 
@@ -34,7 +34,7 @@ FORK_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py    # Terminal fo
    - Example: "new terminal with ffmpeg to convert video.mp4" → tool=raw-cli, task="ffmpeg convert video.mp4"
 
 2. **Check Prerequisites**
-   - IF: `${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py` not found → report missing and stop
+   - IF: `./scripts/fork_terminal.py` not found → report missing and stop
    - IF: agentic tool requested → verify binary is in PATH (`which claude`, `which codex`, `which gemini`)
    - IF: raw CLI → verify the command exists (`which <command>`)
    - Example: `which claude` succeeds → proceed
@@ -42,7 +42,7 @@ FORK_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py    # Terminal fo
 
 3. **Handle Context Handoff (Agentic Tools Only)**
    - IF: context handoff requested AND tool is agentic
-   - THEN: Read `${CLAUDE_SKILL_DIR}/prompts/context-handoff.md` template
+   - THEN: Read `./assets/context-handoff.md` template
    - Fill the template in memory (do NOT modify the file):
      - Replace `{{CONVERSATION_SUMMARY}}` with a concise summary of the conversation so far
      - Replace `{{NEXT_TASK}}` with the user's task for the forked session
@@ -64,7 +64,7 @@ FORK_TOOL: python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py    # Terminal fo
 5. **Fork Terminal**
    - Execute: `<FORK_TOOL> <constructed_command>`
    - Reports success or failure
-   - Example: `python3 ${CLAUDE_SKILL_DIR}/scripts/fork_terminal.py claude -p "fix tests" --dangerously-skip-permissions`
+   - Example: `python3 ./scripts/fork_terminal.py claude -p "fix tests" --dangerously-skip-permissions`
    - Tool: Bash
 
 ## Agentic Tool Reference
