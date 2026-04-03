@@ -211,13 +211,8 @@
 
 ## Skipped Breaking Changes (NEEDS YOUR REVIEW)
 
-### 1. `elevenlabs` skill name is implementation-specific
-The name describes the provider (ElevenLabs) rather than the capability (e.g., `tts`, `audio-gen`). Per naming principles, it should be renamed. However, registry pointers reference `elevenlabs` — renaming requires coordinated update across registry + all consuming agents/skills.
-
-**Recommendation**: If you want to rename, do it as a coordinated migration: rename skill, update registry, update `elevenlabs-operator` and `elevenlabs-voice-designer` agent names, update `speak` skill's discovery path. Or accept the name since ElevenLabs is the de facto brand and unlikely to be swapped.
-
-### 2. `elevenlabs-operator` and `elevenlabs-voice-designer` agent names
-Same issue — implementation prefix. Would need to become `audio-operator` and `voice-designer` (or similar) if the skill is renamed.
+### 1. `elevenlabs` naming — DEFERRED
+Kept as-is. Currently the only voice generation provider. Will rename to a generic capability name (e.g., `audio-gen`) when additional providers are added, as a coordinated migration across skill, agents, and registry.
 
 ---
 
@@ -229,11 +224,11 @@ All remaining README.md files removed from skills. Skill-forge principles update
 ### `${CLAUDE_SKILL_DIR}` vs Relative Paths — RESOLVED
 All `${CLAUDE_SKILL_DIR}` usages replaced with `./` relative paths across all SKILL.md files (variables and body). Skill-forge claude-code.md updated to explicitly discourage `${CLAUDE_SKILL_DIR}` in favor of relative paths.
 
-### `model` Field in Agent Frontmatter
-All agents have a `model:` field (typically `sonnet` or `opus`). This isn't part of the expected agent structure template in create-agent.md, but it's a consistent repo convention. Agents left it in place. Worth noting it's a Claude Code extension field, not portable.
+### `model` Field in Agent Frontmatter — SKIPPED
+Claude Code extension field, not in spec but harmless. Left as-is.
 
-### Cross-Skill Dependencies
-The `speak` skill discovers and calls the `elevenlabs` skill at runtime via a hardcoded `~/.claude/skills` path. This is fragile if the user's skill directory changes. A more robust discovery mechanism (registry query, env var) would improve this, but that's a design decision beyond a simple fix.
+### Cross-Skill Dependencies — SKIPPED
+Registry handles dependency resolution at install time. If a dependency is missing, it fails and the user installs it. No action needed.
 
 ### `skills` Frontmatter Field in Agents — RESOLVED
 Removed `skills:` from all 6 agent frontmatters. Dependencies are declared in `registry.yaml` only (via `requires:`). Updated registry's `add.md` to detect deps from body content instead of frontmatter.
