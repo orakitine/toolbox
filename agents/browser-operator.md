@@ -2,6 +2,9 @@
 name: browser-operator
 description: General-purpose browser automation agent for headless browsing, screenshots, scraping, and parallel sessions. Use when spawning browser tasks as subagents or running multiple browser sessions in parallel.
 model: opus
+allowed-tools:
+  - Bash
+  - Read
 color: orange
 skills:
   - browser
