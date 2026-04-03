@@ -7,18 +7,6 @@ allowed-tools:
   - Read
 ---
 
-# Purpose
-
-Generate speech, sound effects, and music using the ElevenLabs API via the `el` CLI bundled with this skill. Also supports audio isolation and stem separation.
-
-## Prerequisites
-
-- `python3` must be available in PATH (no pip packages needed — stdlib only)
-- `ELEVENLABS_API_KEY` must be set. Add to one of:
-  - Project `.env` (for project-level installs): `echo 'ELEVENLABS_API_KEY=your-key' >> .env`
-  - Global `~/.claude/.env` (for global installs): `echo 'ELEVENLABS_API_KEY=your-key' >> ~/.claude/.env`
-  - Or export directly: `export ELEVENLABS_API_KEY=your-key`
-
 ## Variables
 
 EL_CLI: python3 ${CLAUDE_SKILL_DIR}/scripts/el.py     # Path to the el CLI wrapper
@@ -27,11 +15,15 @@ DEFAULT_MODEL: eleven_multilingual_v2                 # Options: eleven_v3, elev
 OUTPUT_DIR: ./audio                                   # Where generated audio files are saved
 OUTPUT_FORMAT: mp3_44100_128                          # Options: mp3_44100_128, wav_44100, pcm_44100, opus_48000_128
 
+## References
+
+- IF: need full flag details or exact syntax for a command → read `reference/commands.md`
+
 ## Workflow
 
 1. **Check Prerequisites**
-   - IF: `which python3` fails → report "python3 not found" and stop
-   - IF: `${CLAUDE_SKILL_DIR}/scripts/el.py` not found → report "el CLI missing" and stop
+   - IF: `which python3` fails → report "python3 not found" and stop (no pip packages needed — stdlib only)
+   - IF: the `el.py` script from EL_CLI path not found → report "el CLI missing" and stop
    - IF: API key not available → run `<EL_CLI> models` as a lightweight auth check. If it fails with "ELEVENLABS_API_KEY not set", stop and tell the user:
      > ELEVENLABS_API_KEY is not configured. Set it in one of:
      > - **Project-level:** add `ELEVENLABS_API_KEY=your-key` to `./.env`
