@@ -34,8 +34,13 @@ Step-by-step workflow for creating a Claude Code agent definition. Assumes PRINC
    - Example: browser-qa → `Read`, `Glob`, `Bash` (no Write — QA doesn't modify)
 
 5. **Choose a Color**
-   - See color conventions in `./claude-code.md`
-   - Match color to role type for at-a-glance recognition
+   - Match color to role type for at-a-glance recognition:
+     - `green` → QA / validation
+     - `orange` → operator / automation
+     - `purple` → review / analysis
+     - `blue` → research / exploration
+     - `red` → destructive / deploy (caution)
+     - `cyan` → creative / generation
    - Example: QA agent → `green`, operator → `orange`, reviewer → `purple`
 
 6. **Write the Agent Definition**

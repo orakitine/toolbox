@@ -63,7 +63,7 @@ OUTPUT_SUFFIX: -refined                     # Suffix appended to original dir na
    - Example: "Proposing rename playwright-browser → browser. Replaced ${CLAUDE_SKILL_DIR} with relative paths. Added proper description with trigger words."
 
 8. **Evaluate + Fix Loop**
-   - Run the evaluation checklist (from `./evaluate.md`) against the NEW version
+   - Run the evaluation checklist (pre-loaded by SKILL.md alongside this reference) against the NEW version
    - IF: issues found → fix them
    - Repeat until evaluation passes clean (0 critical, 0 warning)
    - Example: First pass finds missing inline example in step 3 → add it → recheck → clean

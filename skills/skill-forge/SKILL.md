@@ -57,7 +57,7 @@ Skill-forge is the meta-skill for creating and maintaining agent skills. It enfo
 ### Create a Skill
 
 - IF: User wants to create a new skill (SKILL.md with optional references, scripts, etc.)
-- THEN: Read and execute `./references/create-skill.md`
+- THEN: Read `./references/create-skill.md` and `./references/directory-layout.md`. IF harness target is Claude Code, also read `./references/claude-code.md`. Then execute the create-skill workflow.
 - EXAMPLES:
   - "/skill-forge create browser"
   - "build a new skill for code review"
@@ -74,7 +74,7 @@ Skill-forge is the meta-skill for creating and maintaining agent skills. It enfo
 ### Refine an Existing Skill
 
 - IF: User wants to rewrite, modernize, migrate, or improve an existing skill
-- THEN: Read and execute `./references/refine.md`
+- THEN: Read `./references/refine.md` and `./references/evaluate.md` (needed for the evaluate+fix loop). IF harness target is Claude Code, also read `./references/claude-code.md`. Then execute the refine workflow.
 - EXAMPLES:
   - "/skill-forge refine playwright-browser"
   - "modernize the doc-vault skill"
@@ -84,7 +84,7 @@ Skill-forge is the meta-skill for creating and maintaining agent skills. It enfo
 ### Evaluate Existing Skill (Independent Review — Default)
 
 - IF: User wants to audit, review, or check AND did NOT say "inline"
-- THEN: Read `./references/evaluate.md` for the checklist, then spawn a subagent (if supported by harness) with the evaluate workflow as its task. Pass it the skill path, the full PRINCIPLES.md content, and the evaluate.md checklist. The subagent returns a report. This ensures independent, unbiased review.
+- THEN: Read `./references/evaluate.md`. IF harness target is Claude Code, also read `./references/claude-code.md` for the CC-specific checklist. Then spawn a subagent (if supported by harness) with the evaluate workflow as its task. Pass it the skill path, the full PRINCIPLES.md content, the evaluate.md checklist, and any harness-specific checklist. The subagent returns a report. This ensures independent, unbiased review.
 - EXAMPLES:
   - "/skill-forge evaluate doc-vault"
   - "audit all my skills"
@@ -93,7 +93,7 @@ Skill-forge is the meta-skill for creating and maintaining agent skills. It enfo
 ### Evaluate Existing Skill (Inline)
 
 - IF: User wants to evaluate AND says "inline" or "quick check"
-- THEN: Read and execute `./references/evaluate.md` directly in the main context. Use this for quick checks or when interactive discussion during evaluation is needed.
+- THEN: Read `./references/evaluate.md`. IF harness target is Claude Code, also read `./references/claude-code.md`. Execute the evaluate workflow directly in the main context. Use this for quick checks or when interactive discussion during evaluation is needed.
 - EXAMPLES:
   - "/skill-forge evaluate doc-vault inline"
   - "quick check the browser skill"

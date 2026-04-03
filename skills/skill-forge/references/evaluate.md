@@ -89,7 +89,7 @@ AUTO_FIX: false                              # Whether to auto-fix issues (with 
 
 10. **Check Harness-Specific Compliance (if applicable)**
     - IF: skill is in a harness-specific directory (e.g., `.claude/skills/`) OR has harness-specific frontmatter
-    - THEN: also read the relevant harness reference (e.g., `./claude-code.md`) and apply its evaluation checklist
+    - THEN: apply the harness-specific evaluation checklist (pre-loaded by SKILL.md when harness target was detected in step 3)
     - This is additive — universal checks always run, harness checks layer on top
     - Example: Skill in `.claude/skills/` with `allowed-tools` → also run Claude Code checklist
 

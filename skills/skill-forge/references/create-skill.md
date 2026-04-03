@@ -45,7 +45,7 @@ Step-by-step workflow for creating a new skill from scratch. Harness-agnostic �
        version: "1.0"
      ---
      ```
-   - IF: targeting a specific harness → also read the harness-specific reference (e.g., `./claude-code.md`) for additional frontmatter fields
+   - IF: targeting a specific harness → apply the harness-specific frontmatter fields (pre-loaded by SKILL.md before this reference)
    - Harness-specific fields are additive — they go in the same frontmatter block and are ignored by other harnesses
 
 5. **Write the Purpose Section**
@@ -120,7 +120,6 @@ Step-by-step workflow for creating a new skill from scratch. Harness-agnostic �
      ```
 
 10. **Create Supporting Files (if needed)**
-    - See `./directory-layout.md` for full layout options
     - `scripts/` — for deterministic operations (shell, python). Design for agentic use: no interactive prompts, include --help, structured output, idempotent.
     - `assets/` — for templates, data files, images
     - All internal references use relative paths from skill root (`./scripts/check.sh`)
