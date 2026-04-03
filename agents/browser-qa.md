@@ -2,6 +2,9 @@
 name: browser-qa
 description: UI validation agent that executes user stories against web apps and reports structured pass/fail results with screenshots at every step. Use for QA, acceptance testing, user story validation, or UI verification.
 model: opus
+allowed-tools:
+  - Bash
+  - Read
 color: green
 skills:
   - browser
