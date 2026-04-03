@@ -13,10 +13,6 @@ allowed-tools:
   - Bash
 ---
 
-# Purpose
-
-Read a restaurant menu file in any format Claude can parse (PDF, image, DOCX, HTML, Markdown) and generate a single self-contained HTML file that serves as a mobile-friendly ordering assistant with search, filtering, cart, and SMS-ready order text export.
-
 ## Workflow
 
 1. **Locate and Read the Menu**
