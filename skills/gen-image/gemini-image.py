@@ -33,24 +33,42 @@ MODELS = {
         "name": "Imagen 4",
         "api": "imagen",
         "capabilities": ["create"],
-        "notes": "Best quality. Requires billing.",
+        "notes": "Solid default for creation. Requires billing.",
     },
-    "gemini-2.0-flash-exp": {
-        "name": "Gemini 2.0 Flash (experimental)",
+    "imagen-4.0-ultra-generate-001": {
+        "name": "Imagen 4 Ultra",
+        "api": "imagen",
+        "capabilities": ["create"],
+        "notes": "Premium quality for hero shots. Slower and more expensive.",
+    },
+    "imagen-4.0-fast-generate-001": {
+        "name": "Imagen 4 Fast",
+        "api": "imagen",
+        "capabilities": ["create"],
+        "notes": "Cheaper and quicker than base Imagen 4.",
+    },
+    "gemini-2.5-flash-image": {
+        "name": "Nano Banana (Gemini 2.5 Flash Image)",
         "api": "gemini",
         "capabilities": ["create", "edit"],
-        "notes": "Free tier, rate-limited. Experimental.",
+        "notes": "Stable image gen + edit. Replaces the old 2.0-flash-exp preview.",
     },
-    "gemini-2.5-flash-preview-image-generation": {
-        "name": "Gemini 2.5 Flash Preview",
+    "gemini-3-pro-image-preview": {
+        "name": "Nano Banana Pro (Gemini 3 Pro Image)",
         "api": "gemini",
         "capabilities": ["create", "edit"],
-        "notes": "Preview. Free tier, rate-limited.",
+        "notes": "Preview. Top-tier quality, best character/text consistency.",
+    },
+    "gemini-3.1-flash-image-preview": {
+        "name": "Nano Banana 2 (Gemini 3.1 Flash Image)",
+        "api": "gemini",
+        "capabilities": ["create", "edit"],
+        "notes": "Preview. Newer flash-tier image model.",
     },
 }
 
 DEFAULT_CREATE_MODEL = "imagen-4.0-generate-001"
-DEFAULT_EDIT_MODEL = "gemini-2.0-flash-exp"
+DEFAULT_EDIT_MODEL = "gemini-2.5-flash-image"
 
 
 # ── .env loading ──────────────────────────────────────────────────────────────
