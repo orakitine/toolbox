@@ -1,6 +1,6 @@
 ---
 name: gen-image
-description: Generate or edit images using AI image models. Currently supports Google Gemini (Imagen 4 for creation, Gemini Flash for editing). Provider-agnostic design. Use for image generation, visual content creation, or image editing tasks.
+description: Generate or edit images using AI image models. Currently supports Google Gemini (Nano Banana Pro for creation, Nano Banana for editing). Provider-agnostic design. Use for image generation, visual content creation, or image editing tasks.
 argument-hint: "[create|edit] [prompt or options]"
 allowed-tools:
   - Bash
@@ -24,8 +24,8 @@ Generate or edit images via AI image models. Generic — no style or domain know
 ## Variables
 
 GI_CLI: python3 ${CLAUDE_SKILL_DIR}/gemini-image.py   # Path to the Gemini image CLI
-DEFAULT_CREATE_MODEL: imagen-4.0-generate-001          # Imagen 4. Best quality. Override with --model
-DEFAULT_EDIT_MODEL: gemini-2.0-flash-exp               # Gemini 2.0 Flash. Only option for edits currently
+DEFAULT_CREATE_MODEL: gemini-3-pro-image-preview      # Nano Banana Pro. Best quality + character/text fidelity. Override with --model (e.g. imagen-4.0-generate-001 for cheaper batches)
+DEFAULT_EDIT_MODEL: gemini-2.5-flash-image             # Nano Banana. Default for edits
 DEFAULT_SIZE: 1280x960                                 # 4:3 landscape. Override with --size
 
 ## Workflow

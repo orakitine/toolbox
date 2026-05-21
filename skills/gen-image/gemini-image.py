@@ -33,7 +33,7 @@ MODELS = {
         "name": "Imagen 4",
         "api": "imagen",
         "capabilities": ["create"],
-        "notes": "Solid default for creation. Requires billing.",
+        "notes": "Solid, cheaper fallback for creation. Requires billing.",
     },
     "imagen-4.0-ultra-generate-001": {
         "name": "Imagen 4 Ultra",
@@ -57,7 +57,7 @@ MODELS = {
         "name": "Nano Banana Pro (Gemini 3 Pro Image)",
         "api": "gemini",
         "capabilities": ["create", "edit"],
-        "notes": "Preview. Top-tier quality, best character/text consistency.",
+        "notes": "Preview. Top-tier quality, best character/text consistency. Default for create.",
     },
     "gemini-3.1-flash-image-preview": {
         "name": "Nano Banana 2 (Gemini 3.1 Flash Image)",
@@ -67,7 +67,7 @@ MODELS = {
     },
 }
 
-DEFAULT_CREATE_MODEL = "imagen-4.0-generate-001"
+DEFAULT_CREATE_MODEL = "gemini-3-pro-image-preview"
 DEFAULT_EDIT_MODEL = "gemini-2.5-flash-image"
 
 
@@ -238,7 +238,7 @@ def call_imagen(prompt, model, aspect_ratio, sample_count=1):
     return base64.b64decode(predictions[0]["bytesBase64Encoded"])
 
 
-def call_gemini(prompt, model, input_image_b64=None):
+def call_gemini(prompt, model, input_image_b64=None, aspect_ratio=None):
     """Gemini generateContent API — text to image or image editing."""
     url = f"{API_BASE}/models/{model}:generateContent"
     parts = []
@@ -246,9 +246,16 @@ def call_gemini(prompt, model, input_image_b64=None):
         parts.append({"inlineData": {"mimeType": "image/png", "data": input_image_b64}})
     parts.append({"text": prompt})
 
+    gen_config = {"responseModalities": ["IMAGE", "TEXT"]}
+    # Gemini image models honor aspect ratio via generationConfig.imageConfig
+    # (Imagen uses a separate :predict parameter — see call_imagen). Only set it
+    # on generation; for edits the output inherits the input image's ratio.
+    if aspect_ratio and not input_image_b64:
+        gen_config["imageConfig"] = {"aspectRatio": aspect_ratio}
+
     data = api_request(url, {
         "contents": [{"parts": parts}],
-        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
+        "generationConfig": gen_config,
     })
 
     candidates = data.get("candidates", [])
@@ -368,7 +375,7 @@ def cmd_create(flags, positional):
     if api_type == "imagen":
         image_bytes = call_imagen(prompt, model, aspect_ratio)
     else:
-        image_bytes = call_gemini(prompt, model)
+        image_bytes = call_gemini(prompt, model, aspect_ratio=aspect_ratio)
 
     path, kb = write_image(image_bytes, output)
     elapsed = time.time() - start
@@ -438,8 +445,8 @@ Global flags:
   --json                          Output raw JSON
 
 Defaults:
-  create model: imagen-4.0-generate-001 (Imagen 4)
-  edit model:   gemini-2.0-flash-exp (Gemini 2.0 Flash)
+  create model: gemini-3-pro-image-preview (Nano Banana Pro)
+  edit model:   gemini-2.5-flash-image (Nano Banana)
   size:         1280x960 (4:3 landscape)
   output:       output.png (create) / edited.png (edit)
 
