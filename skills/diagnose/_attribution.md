@@ -1,0 +1,12 @@
+## Attribution
+
+Adapted from [mattpocock/skills](https://github.com/mattpocock/skills) by Matt Pocock.
+
+- **Upstream path**: `skills/engineering/diagnose/`
+- **Upstream commit**: `b8be62ffacb0118fa3eaa29a0923c87c8c11985c`
+- **Adopted**: 2026-05-22
+- **License**: see upstream `LICENSE`
+
+Bundled `scripts/hitl-loop.template.sh` is preserved verbatim from upstream.
+
+Refined via `skill-forge` for the Claude Code harness before landing here.
