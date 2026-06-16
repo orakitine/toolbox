@@ -35,6 +35,7 @@ prompts/<name>.md               # Reusable prompts
 ## Skills
 
 - **browser** — Headless browser automation via playwright-cli. Core capability skill.
+- **browser-microscope** — Real-browser DOM/layout forensics. Hit-tests why a click won't land, dumps scroll/box geometry, reads live CSS tokens, sweeps viewport widths to find breakpoint bugs. Drives the local Playwright npm package. Complements browser/browser-qa.
 - **browser-review** — Parallel UI validation. Discovers user stories, fans out browser-qa agents, aggregates pass/fail results.
 - **browser-workflow** — Loads and executes saved browser automation workflows through the browser skill.
 - **doc-cache** — Transparent read-through cache for documentation lookups with expiration and garbage collection.

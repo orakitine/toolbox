@@ -9,6 +9,7 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 | Skill | Description |
 |-------|-------------|
 | [browser](skills/browser/) | Headless browser automation via playwright-cli |
+| [browser-microscope](skills/browser-microscope/) | Real-browser DOM/layout forensics: hit-testing, scroll geometry, live tokens, width sweeps |
 | [browser-review](skills/browser-review/) | Parallel UI validation with fan-out QA agents |
 | [browser-workflow](skills/browser-workflow/) | Executes saved browser automation workflows |
 | [doc-cache](skills/doc-cache/) | Transparent read-through cache for documentation lookups |
