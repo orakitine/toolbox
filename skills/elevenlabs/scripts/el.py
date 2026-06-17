@@ -18,6 +18,7 @@ Key resolution order:
 import sys
 import os
 import json
+import base64
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -82,6 +83,17 @@ def parse_args(args):
             positional.append(arg)
             i += 1
     return flags, positional
+
+
+def num_flag(flags, key, cast=float):
+    """Read a numeric flag with a clean error instead of a traceback on bad input."""
+    if key not in flags:
+        return None
+    try:
+        return cast(flags[key])
+    except (ValueError, TypeError):
+        print(f"Error: --{key} expects a number, got '{flags[key]}'", file=sys.stderr)
+        sys.exit(1)
 
 
 def api_get(path, params=None):
@@ -377,6 +389,108 @@ def cmd_history(flags):
         print()
 
 
+def cmd_dialogue(flags, positional):
+    """Multi-voice single-call TTS (eleven_v3). Inputs: JSON array of {text, voice_id}."""
+    src = positional[0] if positional else flags.get("inputs")
+    if not src:
+        print("Usage: el dialogue <inputs.json|json-string> [--model <id>] [--stability n] [--out <path>]", file=sys.stderr)
+        print('  inputs: [{"text": "[excited] Hi!", "voice_id": "..."}, ...]  (max 10 voices, <=2000 chars total)', file=sys.stderr)
+        sys.exit(1)
+
+    # Accept a file path or an inline JSON string
+    if os.path.exists(src):
+        with open(src) as f:
+            inputs = json.load(f)
+    else:
+        try:
+            inputs = json.loads(src)
+        except json.JSONDecodeError:
+            print(f"Error: '{src}' is neither a file nor valid JSON", file=sys.stderr)
+            sys.exit(1)
+
+    if not isinstance(inputs, list) or not inputs:
+        print("Error: inputs must be a non-empty JSON array of {text, voice_id} objects", file=sys.stderr)
+        sys.exit(1)
+
+    total = sum(len(i.get("text", "")) for i in inputs)
+    if total > 2000:
+        print(f"Warning: {total} chars across inputs exceeds the 2000-char dialogue limit; request may fail.", file=sys.stderr)
+
+    body = {"inputs": inputs, "model_id": flags.get("model", "eleven_v3")}
+    if "stability" in flags:
+        body["settings"] = {"stability": num_flag(flags, "stability")}
+
+    fmt = flags.get("format", "mp3_44100_128")
+    out_path = flags.get("out", "dialogue_output.mp3")
+    res = api_post_json(f"/v1/text-to-dialogue?output_format={fmt}", body)
+    write_audio(res, out_path)
+
+
+def cmd_voicedesign(flags, positional):
+    """Design new voices from a text description (Voice Design v3). Saves preview audio + prints generated_voice_ids."""
+    desc = positional[0] if positional else flags.get("description")
+    if not desc:
+        print("Usage: el voicedesign <description> [--text <preview>] [--model <id>] [--out-prefix <path>]", file=sys.stderr)
+        print('  e.g. el voicedesign "an excitable 4-year-old fox kit, bright and squeaky"', file=sys.stderr)
+        sys.exit(1)
+
+    body = {
+        "voice_description": desc,
+        "model_id": flags.get("model", "eleven_ttv_v3"),
+    }
+    if "text" in flags:
+        body["text"] = flags["text"]
+    else:
+        body["auto_generate_text"] = True
+    if "loudness" in flags:
+        body["loudness"] = num_flag(flags, "loudness")
+    if "guidance" in flags:
+        body["guidance_scale"] = num_flag(flags, "guidance")
+
+    res = api_post_json("/v1/text-to-voice/design", body)
+    data = json.loads(res.read())
+
+    if "json" in flags:
+        print(json.dumps(data, indent=2))
+        return
+
+    previews = data.get("previews", [])
+    prefix = flags.get("out-prefix", "voice-preview")
+    print(f'Designed {len(previews)} preview(s) for: "{desc}"\n')
+    for i, p in enumerate(previews, 1):
+        gid = p.get("generated_voice_id", "")
+        out = f"{prefix}-{i}.mp3"
+        audio = p.get("audio_base_64")
+        if audio:
+            with open(out, "wb") as f:
+                f.write(base64.b64decode(audio))
+        print(f"  [{i}] {out}  ({p.get('duration_secs', '?')}s)")
+        print(f"      generated_voice_id: {gid}")
+    print(f'\nPreview text: "{data.get("text", "")[:120]}"')
+    print("\nTo keep a favourite (gives it a permanent voice_id):")
+    print(f'  el voicesave <generated_voice_id> --name "<name>" --description "{desc}"')
+
+
+def cmd_voicesave(flags, positional):
+    """Persist a designed preview to your voice library, returning a permanent voice_id."""
+    gid = positional[0] if positional else flags.get("generated-voice-id")
+    name = flags.get("name")
+    desc = flags.get("description", "")
+    if not gid or not name:
+        print("Usage: el voicesave <generated_voice_id> --name <name> [--description <desc>]", file=sys.stderr)
+        sys.exit(1)
+
+    body = {"voice_name": name, "voice_description": desc, "generated_voice_id": gid}
+    res = api_post_json("/v1/text-to-voice", body)
+    data = json.loads(res.read())
+
+    if "json" in flags:
+        print(json.dumps(data, indent=2))
+        return
+
+    print(f"✓ Saved voice '{data.get('name')}' → voice_id: {data.get('voice_id')}")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 HELP = """el — ElevenLabs CLI wrapper
@@ -389,6 +503,15 @@ Commands:
   tts <text> --voice <id> [--model <id>] [--out <path>] [--format <fmt>]
       [--stability n] [--similarity n] [--style n] [--speed n] [--seed n]
                                   Generate speech from text
+                                  (expressive: --model eleven_v3 with inline [audio tags])
+  dialogue <inputs.json> [--model <id>] [--stability n] [--out <path>]
+                                  Multi-voice in ONE call (eleven_v3). inputs = JSON array
+                                  of {text, voice_id}; max 10 voices, <=2000 chars total
+  voicedesign <description> [--text <preview>] [--model <id>] [--out-prefix <path>]
+                                  Design new voices from a text prompt (eleven_ttv_v3).
+                                  Saves 3 previews + prints generated_voice_ids
+  voicesave <generated_voice_id> --name <name> [--description <desc>]
+                                  Persist a designed preview to your library (permanent voice_id)
   sfx <description> [--duration <secs>] [--out <path>]
                                   Generate sound effect from description
   music <prompt> [--duration <secs>] [--instrumental] [--out <path>]
@@ -403,6 +526,10 @@ Commands:
 Global flags:
   --json                          Output raw JSON
 
+Exit codes:
+  0  success
+  1  error (bad usage, missing key, API error, invalid input)
+
 Environment:
   ELEVENLABS_API_KEY              Required. Your ElevenLabs API key.
 """
@@ -412,6 +539,9 @@ COMMANDS = {
     "voices": lambda f, p: cmd_voices(f),
     "voice": cmd_voice_get,
     "tts": cmd_tts,
+    "dialogue": cmd_dialogue,
+    "voicedesign": cmd_voicedesign,
+    "voicesave": cmd_voicesave,
     "sfx": cmd_sfx,
     "music": cmd_music,
     "isolate": cmd_isolate,
