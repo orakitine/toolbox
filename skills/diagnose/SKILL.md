@@ -116,3 +116,10 @@ When exploring the codebase during diagnosis, use the project's domain glossary 
    - IF: the answer involves architectural change (no good test seam, tangled callers, hidden coupling) → hand off to a codebase-architecture skill / next-step recommendation with the specifics.
    - Make the recommendation **after** the fix is in, not before — you have more information now than when you started.
    - Example: "Fix landed. Prevention recommendation: the formatter is called from 6 different sites with different row shapes. Consider a single `normalizeRow()` step at ingestion so downstream code doesn't have to defend against schema drift. Filing as a follow-up."
+
+## Works well with
+
+Optional collaborators — `diagnose` runs standalone and these degrade gracefully if absent.
+
+- **`grill-me`** — when the bug report is vague, grill first to nail the real failure mode before building the diagnosis loop.
+- **`tdd`** — once the root cause is found, capture it as a failing test and drive the fix red-green so the regression can't return.

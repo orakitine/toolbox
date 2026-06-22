@@ -70,3 +70,10 @@ Scaffolds the domain-documentation convention that `grill-with-docs` and `improv
   - "what does an ADR look like?"
   - "when is something ADR-worthy?"
   - "how should ADRs be numbered?"
+
+## Works well with
+
+This skill is the substrate the methodology family reads. Run it once; the rest degrade gracefully without it (falling back to plain language).
+
+- **`grill-with-docs`** — reads and writes the `CONTEXT.md` and `docs/adr/` this scaffolds.
+- **`living-plan`**, **`tdd`**, **`improve-codebase-architecture`**, **`zoom-out`** — all consume the `CONTEXT.md` glossary and/or `docs/adr/` decisions it creates.

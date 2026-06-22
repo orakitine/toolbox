@@ -35,3 +35,12 @@ Interview the user relentlessly about every aspect of a plan or design until bot
    - IF: the question can be answered by exploring the codebase (or whatever source-of-truth artifact the subject lives in)
    - THEN: explore the source instead of asking the user, then report the finding
    - Upstream: "If a question can be answered by exploring the codebase, explore the codebase instead."
+
+## Works well with
+
+Optional collaborators — `grill-me` runs standalone and these degrade gracefully if absent.
+
+- **`grill-with-docs`** — the doc-aware variant: use it instead when the plan should be stress-tested against `CONTEXT.md` and `docs/adr/`, sharpening terms and recording ADRs as you go.
+- **`living-plan`** — grill *before* `create-plan` to resolve the decision tree, or grill a plan-first strawman's Questionables and feed resolutions back via `update-plan`.
+- **`diagnose`** — when a bug report is ambiguous, grill first to nail the actual failure mode before reaching for the diagnosis loop.
+- **`tdd`** — align on scope and behaviors here before building test-first.

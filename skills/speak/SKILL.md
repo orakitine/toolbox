@@ -93,3 +93,10 @@ MAX_CACHE_SIZE_MB: 100                        # Max cache size in MB before LRU 
    - Example: "Spoke via cache (14 hits)"
    - Example: "Spoke via elevenlabs — cached for reuse"
    - Example: "Spoke via macOS say (elevenlabs unavailable — no API key)"
+
+## Works well with
+
+Optional collaborators — `speak` runs standalone (it falls back to macOS say) and these degrade gracefully if absent.
+
+- **`elevenlabs`** — the preferred provider `speak` routes to before falling back; install it for high-quality voices.
+- **`speak-narrator`** (agent) — digests content into spoken summaries and delivers them through this skill.

@@ -54,3 +54,10 @@ Persistent communication mode that strips filler from every response. Cuts ~75% 
    - Stay active even when uncertain whether mode is still on
    - Deactivate only when user says "stop caveman", "normal mode", or equivalent explicit phrase
    - Example: After 20 turns user says "normal mode" → resume standard verbose responses
+
+## Works well with
+
+`caveman` is an orthogonal mode — stack it on top of any skill or conversation to cut tokens; it degrades gracefully (just don't switch it on).
+
+- **Any skill** — engage caveman mode during long or verbose tasks to trim filler without losing technical accuracy.
+- **`handoff`** — pairs naturally for compact, low-token handoff documents.

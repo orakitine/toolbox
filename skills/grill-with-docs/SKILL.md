@@ -111,3 +111,12 @@ Drive a relentless interview that challenges the user's plan against the project
   - "is this decision ADR-worthy?"
   - "what sections does an ADR need?"
   - "what number should this ADR be?"
+
+## Works well with
+
+Optional collaborators — `grill-with-docs` runs standalone and these degrade gracefully if absent.
+
+- **`grill-me`** — the plain interview without the docs layer; use that when the project has no `CONTEXT.md`/ADRs to sharpen against.
+- **`setup-toolbox-context`** — scaffolds the `CONTEXT.md` and `docs/adr/` this skill reads and writes; run it first on a new project.
+- **`living-plan`** — this skill *writes* the ADRs; a living plan then *links* them as back-references and speaks the same `CONTEXT.md` vocabulary.
+- **`tdd` / `improve-codebase-architecture`** — both consume the `CONTEXT.md` glossary and ADRs this skill produces.

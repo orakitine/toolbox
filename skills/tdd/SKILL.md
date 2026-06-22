@@ -142,3 +142,12 @@ RIGHT (vertical):
   - "what should I refactor now that tests pass?"
   - "I see duplication — extract or leave?"
   - "the new code makes the old code look bad — what do I do?"
+
+## Works well with
+
+Optional collaborators — `tdd` runs standalone and these degrade gracefully if absent.
+
+- **`grill-with-docs`** (or `grill-me`) — align on scope, interface, and behaviors before the first test; `grill-with-docs` also records the ADRs `tdd` should respect.
+- **`living-plan`** — its `build` workflow delegates the test-first implementation of each task to `tdd`, handing over the plan's behaviors as the approved design. `tdd` stays fully usable without it.
+- **`diagnose`** — after a diagnosis pins a bug, lock the fix with a `tdd` regression test.
+- **`setup-toolbox-context`** — provides the `CONTEXT.md` vocabulary `tdd` uses for test and interface names.

@@ -26,13 +26,40 @@ Public repo of stable Claude Code skills, agents, and prompts. The **single sour
 ```
 skills/<name>/SKILL.md          # Each skill gets its own directory
   cookbook/                      # Scenario-specific workflows
-  reference/                    # Heavy reference material
-  scripts/                      # Executable helpers
+  reference/ (or references/)    # Heavy reference material
+  scripts/                       # Executable helpers
 agents/<name>.md                # Agent configurations
-prompts/<name>.md               # Reusable prompts
+prompts/<name>.md               # Reusable prompts (currently empty)
+audio/                          # Sample/asset audio output
+docs/                           # Repo documentation
 ```
 
+## Methodology Convention
+
+Several skills share two project artifacts as their backbone — scaffold them with `setup-toolbox-context`:
+
+- **`CONTEXT.md`** — domain glossary (single-context) or `CONTEXT-MAP.md` + per-context `CONTEXT.md` (multi-context).
+- **`docs/adr/`** — architecture decision records.
+
+`grill-with-docs` and `improve-codebase-architecture` read and write these; `zoom-out` uses the glossary vocabulary. New skills that touch planning/design should integrate with this convention rather than inventing their own.
+
+## Skill Awareness (Three-Tier Model)
+
+Skills advertise how they compose. Because the registry distributes each skill **individually** (it copies the skill's own directory; this `CLAUDE.md` does NOT travel), cross-skill synergy must live in the skill itself to be discoverable downstream.
+
+1. **Hard dependency** → `registry.yaml` `requires` field (auto-installs recursively). Use only when a skill literally cannot run without another.
+2. **Soft synergy** → a `## Works well with` section in the skill's own `SKILL.md`. Names *optional* collaborators with **graceful degradation** (the skill must still run if the neighbor is absent). Travels with the skill.
+3. **Scenarios / recipes** → multi-step workflows that chain 3+ skills live in [`docs/skills-playbook.md`](docs/skills-playbook.md), the single source of truth for composition. Local onboarding only; does not travel.
+
+**MANDATE for new skills:** every new toolbox skill with a real collaborator MUST include a `## Works well with` section (soft synergy, graceful degradation, pairwise adjacency only — no multi-step recipes, no outbound pointer to the playbook). Skills with genuinely no collaborator omit the section. This convention is toolbox-local, so it lives here, NOT in `skill-forge` (which stays portable / agentskills.io-universal).
+
+## Scenarios
+
+How the skills compose — recipes, the CONTEXT.md/ADR convention, and per-skill quick reference — all live in **[`docs/skills-playbook.md`](docs/skills-playbook.md)**. (Composition is a graph with multiple entry points, not one rigid pipeline.)
+
 ## Skills
+
+### Capability skills
 
 - **browser** — Headless browser automation via playwright-cli. Core capability skill.
 - **browser-microscope** — Real-browser DOM/layout forensics. Hit-tests why a click won't land, dumps scroll/box geometry, reads live CSS tokens, sweeps viewport widths to find breakpoint bugs. Drives the local Playwright npm package. Complements browser/browser-qa.
@@ -43,9 +70,28 @@ prompts/<name>.md               # Reusable prompts
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
 - **gen-image** — Image generation and editing via AI models (Gemini/Imagen). Provider-agnostic design with bundled Python CLI.
 - **menu-app** — Converts restaurant menu files (PDF, image, Word, HTML, MD) into self-contained single-page HTML ordering apps with search, cart, and order text export.
+- **speak** — Provider-agnostic TTS output with audio caching. Text in, audio out. Caches generated audio to skip redundant API calls on repeated phrases. Falls back through elevenlabs → macOS say.
+
+### Engineering-methodology skills
+
+- **setup-toolbox-context** — Scaffolds the `CONTEXT.md` glossary and `docs/adr/` directory the methodology skills expect. Single- or multi-context layout.
+- **living-plan** — Authors and maintains a living, executable Markdown plan in `docs/plans/`. Fixed goal (Purpose + Definition of Done), living path (4-state status checklist, append-only amendments, cross-agent metadata). Reads `CONTEXT.md`, links ADRs (never writes them), and `build` delegates implementation to `tdd`. Adapted from [disler/planf3](https://github.com/disler/planf3) — Markdown-first, image generation removed.
+- **grill-me** — Relentless interview that walks the decision tree of a plan/design one question at a time, each with a recommended answer, until both sides share a mental model.
+- **grill-with-docs** — Grilling interview that stress-tests a plan against `CONTEXT.md` and `docs/adr/`, sharpening terminology and updating those docs inline as decisions crystallise.
+- **improve-codebase-architecture** — Finds deepening opportunities (shallow → deep modules) informed by `CONTEXT.md` and ADRs. Aims at testability and AI-navigability.
+- **zoom-out** — Pulls up a layer of abstraction and maps surrounding modules/callers using the project's domain glossary. Counters tunnel vision.
+- **tdd** — Red-green-refactor via vertical slices (one test → one implementation). Tests verify behavior through public interfaces.
+- **diagnose** — Disciplined diagnosis loop for hard bugs and perf regressions: reproduce, minimise, hypothesise, instrument, fix, regression-test.
+- **handoff** — Compacts the current conversation into a self-contained handoff doc (written to temp) so a fresh agent can resume work. References existing plans/ADRs/PRs rather than duplicating them.
+
+### Meta skills
+
 - **skill-forge** — Meta-skill for creating, evaluating, and refining skills, agents, and commands.
 - **skill-guide** — Discovers and explains installed skills/agents. Inventory, detail, and recommend modes.
-- **speak** — Provider-agnostic TTS output with audio caching. Text in, audio out. Caches generated audio to skip redundant API calls on repeated phrases. Falls back through elevenlabs → macOS say.
+
+### Modes
+
+- **caveman** — Ultra-compressed communication mode (~75% fewer tokens) preserving technical accuracy.
 
 ## Agents
 

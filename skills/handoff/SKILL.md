@@ -64,3 +64,10 @@ Produces a single self-contained markdown document that captures everything a fr
    - Write the file to the path chosen in step 2
    - Report the absolute file path back to the user as the final line of the response, so they can copy it into the next session
    - Example final line: `Handoff written: /tmp/handoff-auth-refactor-20260522-141033.md`
+
+## Works well with
+
+`handoff` is an orthogonal context-transfer utility — usable after any task, standalone, and these degrade gracefully if absent.
+
+- **`living-plan`** — a handoff doc *references* the plan at `docs/plans/...` rather than duplicating it, so the next agent resumes against the living plan.
+- **`fork-terminal`** — generate a handoff doc to seed the context of a forked terminal session or a fresh agent instance.

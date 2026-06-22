@@ -92,3 +92,9 @@ Part of the **browser** family. Depends on `browser` for all browser automation.
 - `browser-review` — parallel QA orchestration (sibling)
 - `browser-qa` — QA validation agent for individual stories (sibling)
 - `browser-operator` — general browser session agent (sibling)
+
+## Works well with
+
+Optional collaborators — `browser-workflow` runs standalone and these degrade gracefully if absent.
+
+- **`browser`** — executes the loaded workflow steps through this underlying capability.

@@ -74,3 +74,9 @@ FORK_TOOL: python3 ./scripts/fork_terminal.py    # Terminal forking script
 | claude-code | `claude` | `-p "<task>"` | `--model <model>` | `--dangerously-skip-permissions` |
 | codex-cli | `codex` | `"<task>"` (positional, last) | `-m <model>` | `--dangerously-bypass-approvals-and-sandbox` |
 | gemini-cli | `gemini` | `-i "<task>"` (must be last) | `--model <model>` | `--yolo` |
+
+## Works well with
+
+Optional collaborators — `fork-terminal` runs standalone and these degrade gracefully if absent.
+
+- **`handoff`** — generate a handoff doc first, then fork a terminal that opens a fresh agent already seeded with that context.

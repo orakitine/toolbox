@@ -79,3 +79,11 @@ FILENAME_FILTER: ""                     # Restrict discovery to matching YAML fi
      ```
    - IF: any failures → include full failure reports below the table
    - Report screenshot root directory for easy browsing
+
+## Works well with
+
+Optional collaborators — `browser-review` runs standalone and these degrade gracefully if absent.
+
+- **`browser`** — the underlying capability it fans out across parallel sessions.
+- **`browser-qa`** (agent) — the per-story validator `browser-review` spawns and aggregates.
+- **`browser-microscope`** — escalate here to dissect a layout failure a story surfaced.

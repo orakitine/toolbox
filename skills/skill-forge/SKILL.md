@@ -97,3 +97,10 @@ Skill-forge is the meta-skill for creating and maintaining agent skills. It enfo
 - EXAMPLES:
   - "/skill-forge evaluate doc-vault inline"
   - "quick check the browser skill"
+
+## Works well with
+
+Optional collaborators — `skill-forge` runs standalone and these degrade gracefully if absent.
+
+- **`skill-guide`** — discovers and explains what already exists, so `skill-forge` builds the right gap rather than a duplicate.
+- **`registry`** — distributes the skills `skill-forge` creates across devices, projects, and teams.

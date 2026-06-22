@@ -77,3 +77,10 @@ REGISTRY_YAML: ~/.claude/skills/registry/registry.yaml    # Registry catalog for
   - "what's the best way to automate browser tasks?"
   - "I need to validate user stories across my app"
   - "how can I check code quality before committing?"
+
+## Works well with
+
+Optional collaborators — `skill-guide` runs standalone and these degrade gracefully if absent.
+
+- **`skill-forge`** — once `skill-guide` surfaces a gap, create or refine the skill to fill it.
+- **`registry`** — install the skills `skill-guide` recommends.

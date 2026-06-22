@@ -23,3 +23,11 @@ Counter tunnel-vision when working inside a single file or function. Instead of 
    - Label the map with the project's own vocabulary, not generic terms
    - If the project has a glossary, use the words it defines verbatim
    - Example: if the project's terms are `Tenant` and `Ledger`, the map uses those words rather than "customer" or "database"
+
+## Works well with
+
+Optional collaborators — `zoom-out` runs standalone and these degrade gracefully if absent.
+
+- **`improve-codebase-architecture`** — after mapping a layer, hand off to find deepening opportunities in it.
+- **`setup-toolbox-context`** — provides the domain glossary `zoom-out` labels its maps with.
+- **`living-plan`** — orient with a zoom-out map before authoring a plan inside unfamiliar code.

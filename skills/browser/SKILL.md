@@ -62,3 +62,9 @@ SCREENSHOTS_DIR: ./screenshots    # Where screenshots are saved
    - Example: `playwright-cli -s=mystore-checkout close`
    - To close ALL sessions: `playwright-cli close-all`
    - Tool: Bash `playwright-cli -s=<session-name> close`
+
+## Works well with
+
+`browser` is the core capability others build on; it runs standalone and these degrade gracefully if absent.
+
+- **The browser family** — `browser-workflow` (runs saved workflows through it), `browser-review` (fans out parallel QA), and `browser-microscope` (layout/DOM forensics) all sit on top of this skill. The `browser-operator` and `browser-qa` agents drive it.

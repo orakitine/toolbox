@@ -126,3 +126,10 @@ WAIT_MS: 1000                      # Settle delay after load before probing
   - "show me how this found the carousel bug"
   - "how do I check focus order / z-index stacking with this"
   - "capture a screenshot at a specific width"
+
+## Works well with
+
+Optional collaborators — `browser-microscope` runs standalone and these degrade gracefully if absent.
+
+- **`browser`** — the journey-walking complement; use `browser` to navigate, `browser-microscope` to dissect why a click won't land or a layout breaks.
+- **`browser-review` / `browser-qa`** — reach for the microscope to diagnose the layout failures these surface.

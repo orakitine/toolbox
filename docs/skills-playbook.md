@@ -29,6 +29,28 @@ These are recipes — chains of skills for common situations.
 
 `grill-with-docs` updates `CONTEXT.md` and `docs/adr/` inline as decisions crystallize. By the time you reach `/tdd`, the feature has names, boundaries, and recorded trade-offs. `tdd` reads `CONTEXT.md` so test names and interface vocabulary match the project's language.
 
+### Planning a larger piece of work (durable plan)
+
+When the work is big enough to need a written, executable plan — not just a conversation — reach for `living-plan`. Two entry points:
+
+```
+# Grill-first (you know the questions)
+/grill-with-docs                 # resolve the decision tree, capture ADRs
+  ↓
+/living-plan "<work>"            # create the plan in docs/plans/, linking those ADRs
+  ↓
+/living-plan build <plan>        # walk the phases; delegates each task to /tdd
+
+# Plan-first strawman (the idea is still vague)
+/living-plan "<work>" questionable   # create, surfacing open decisions as Questionables
+  ↓
+/grill-me                        # attack the Questionables
+  ↓
+/living-plan update <plan>       # fold resolutions back in, then build
+```
+
+The plan has a fixed goal (Purpose + a Definition of Done = the global validation commands) but a living path: 4-state status markers (`[]`/`[wip]`/`[x]`/`[f]`), an append-only amendments log, and metadata that survives across agents — which also makes it a coordination ledger for a multi-agent swarm. `living-plan` reads `CONTEXT.md` and *links* the ADRs `grill-with-docs` writes; it never writes ADRs itself. `handoff` references the `docs/plans/...` file rather than duplicating it.
+
 ### Inherited an unfamiliar codebase
 
 ```
@@ -152,6 +174,13 @@ Format details: `skills/grill-with-docs/references/CONTEXT-FORMAT.md` and `skill
 - **Trigger**: "set up context", "init context.md", `/setup-toolbox-context`
 - **Inputs**: optionally `--single` or `--multi`; otherwise detected from repo
 - **Side effects**: writes `CONTEXT.md` (or `CONTEXT-MAP.md`), creates `docs/adr/` with a README stub, optionally appends to `CLAUDE.md`/`AGENTS.md`
+
+#### `living-plan`
+
+- **What**: authors and maintains a living, executable Markdown plan (create / update / update-references / build)
+- **Trigger**: "plan this", "write a spec", "design doc", "living plan", "build the plan", `/living-plan`
+- **Inputs**: a planning prompt; optional `questionable` flag to surface open decisions
+- **Side effects**: writes `docs/plans/<name>.md`; `build` edits source files (delegating to `tdd`) and flips status markers in the plan; reads `CONTEXT.md` and links (never writes) `docs/adr/`
 
 ### Productivity
 

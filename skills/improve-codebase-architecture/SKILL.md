@@ -122,3 +122,11 @@ Key principles (see [./references/LANGUAGE.md](./references/LANGUAGE.md) for the
   - "is this a module or a service?"
   - "what's the difference between interface and adapter here?"
   - "what does 'depth' mean exactly?"
+
+## Works well with
+
+Optional collaborators — `improve-codebase-architecture` runs standalone and these degrade gracefully if absent.
+
+- **`setup-toolbox-context`** — scaffolds the `CONTEXT.md` glossary and `docs/adr/` this skill draws its naming and respects its decisions from.
+- **`zoom-out`** — map the surrounding modules and callers first, so deepening candidates are anchored in the real caller-graph.
+- **`grill-with-docs`** — sharpen fuzzy terms and record an ADR when a candidate refactor reopens a decision.

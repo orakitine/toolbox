@@ -113,3 +113,10 @@ OUTPUT_FORMAT: mp3_44100_128                          # Options: mp3_44100_128, 
    - Add `--json` to any command for raw JSON output
    - Example: `<EL_CLI> history --voice Aa6nEBJJMKJwJkCx8VU2 --limit 5`
    - Tool: Bash
+
+## Works well with
+
+Optional collaborators — `elevenlabs` runs standalone and these degrade gracefully if absent.
+
+- **`speak`** — the provider-agnostic TTS primitive that falls back *through* `elevenlabs` first (then macOS say); use `speak` when you just need audio out, `elevenlabs` directly for voice design, dialogue, SFX, and music.
+- **`elevenlabs-operator` / `elevenlabs-voice-designer`** (agents) — drive this skill for parallel generation and voice casting.
