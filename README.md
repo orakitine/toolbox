@@ -16,6 +16,7 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 | [elevenlabs](skills/elevenlabs/) | TTS, sound effects, music generation, audio processing |
 | [fork-terminal](skills/fork-terminal/) | Fork terminal sessions with CLI or agentic coding tools |
 | [gen-image](skills/gen-image/) | Image generation and editing via AI models (Gemini/Imagen) |
+| [ios-simulator-microscope](skills/ios-simulator-microscope/) | Reproduce and measure iOS-Safari-only bugs on a booted iOS Simulator via safaridriver + CGEvent |
 | [menu-app](skills/menu-app/) | Convert restaurant menus to self-contained HTML ordering apps |
 | [skill-forge](skills/skill-forge/) | Create, evaluate, and refine skills and agents |
 | [skill-guide](skills/skill-guide/) | Discover and explain installed skills and agents |

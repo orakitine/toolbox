@@ -69,6 +69,7 @@ How the skills compose — recipes, the CONTEXT.md/ADR convention, and per-skill
 - **elevenlabs** — TTS, sound effects, music generation, audio processing via ElevenLabs API. Bundled Python CLI.
 - **fork-terminal** — Fork a terminal session to a new window with a command or agentic coding tool. Supports context handoff.
 - **gen-image** — Image generation and editing via AI models (Gemini/Imagen). Provider-agnostic design with bundled Python CLI.
+- **ios-simulator-microscope** — Reproduce and measure iOS-Safari-only layout/rendering/interaction bugs on a booted iOS Simulator. Drives Safari via safaridriver + simctl, scrolls via macOS CGEvent to trigger toolbar-collapse dynamics, paints measurements into screenshots. The real-device counterpart to browser-microscope.
 - **menu-app** — Converts restaurant menu files (PDF, image, Word, HTML, MD) into self-contained single-page HTML ordering apps with search, cart, and order text export.
 - **speak** — Provider-agnostic TTS output with audio caching. Text in, audio out. Caches generated audio to skip redundant API calls on repeated phrases. Falls back through elevenlabs → macOS say.
 

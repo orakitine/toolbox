@@ -133,3 +133,4 @@ Optional collaborators — `browser-microscope` runs standalone and these degrad
 
 - **`browser`** — the journey-walking complement; use `browser` to navigate, `browser-microscope` to dissect why a click won't land or a layout breaks.
 - **`browser-review` / `browser-qa`** — reach for the microscope to diagnose the layout failures these surface.
+- **`ios-simulator-microscope`** — the real-device counterpart; escalate there when a bug only reproduces in real iOS Safari (toolbar collapse, dynamic-viewport units, touch dynamics) that desktop Playwright can't model.
