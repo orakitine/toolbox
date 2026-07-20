@@ -65,7 +65,7 @@ else
     "it ships with Safari at /usr/bin/safaridriver — ensure Safari is installed and PATH includes /usr/bin"
 fi
 
-# 4. Node >= 18 (sim-session.mjs uses global fetch / AbortSignal.timeout)
+# 4. Node >= 18 (sim-session.mjs and sim-bridge.mjs use global fetch)
 if command -v node >/dev/null 2>&1; then
   node_major=$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)
   if [ "${node_major:-0}" -ge 18 ]; then

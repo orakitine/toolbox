@@ -9,23 +9,25 @@ description: >-
   and collapse the toolbar so dynamic-viewport dynamics appear. Use when a bug
   only shows in real iOS Safari and not in Playwright/Chromium/jsdom: dynamic
   viewport (dvh/svh/lvh) or stale initial-containing-block gaps, 100vh/100%
-  sizing wrong after toolbar collapse, :focus-visible over-matching,
-  momentum-scroll or rubber-band glitches, sticky/fixed drift, top-layer
-  <dialog>/sheet coverage, safe-area insets, or any "works in Storybook but
-  broken on iPad" report. Trigger phrases: "test/reproduce this on the
-  iPad/iOS simulator", "iOS Safari only bug", "check on real Safari".
+  sizing wrong after toolbar collapse, :focus-visible over-matching on
+  programmatic or touch focus, momentum-scroll or rubber-band glitches,
+  sticky/fixed drift, top-layer <dialog>/sheet coverage, safe-area insets, or
+  any "works in Storybook but broken on iPad" report. Trigger phrases: "test on
+  the iPad simulator", "reproduce this on iOS", "measure it in the iOS
+  simulator", "drive the iOS simulator", "iOS Safari only bug", "check on real
+  Safari", "simulator viewport / toolbar / focus / rendering".
 license: MIT
 compatibility: >-
   macOS with Xcode + iOS Simulator runtimes (xcrun simctl, safaridriver).
-  Node.js >= 18 for the session script; Swift toolchain for the CGEvent
-  helpers. Terminal needs Accessibility permission for scroll/tap.
+  Node.js >= 18 for the session and bridge scripts; Swift toolchain for the
+  CGEvent helpers. Terminal needs Accessibility permission for scroll/tap.
 allowed-tools:
   - Bash
   - Read
 argument-hint: "[device] [url] [what to inspect]"
 metadata:
   author: oleg
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Purpose
@@ -50,7 +52,24 @@ All environmental preconditions are checked by `./scripts/preflight.sh` (workflo
 ## Variables
 
 DRIVER_PORT: 4444          # Port for `safaridriver -p`; scripts read SIM_DRIVER=http://localhost:4444
+BRIDGE_PORT: 8899          # Port for `sim-bridge.mjs serve` (Mode B); scripts read SIM_BRIDGE_PORT
 DEVICE_MATCH: iPad Air 13  # Substring to pick the device from `simctl list` (match the bug report's device class)
+
+## Pick a mode first
+
+**safaridriver and CGEvent gestures are mutually exclusive.** A synthetic drag is
+indistinguishable from a finger, so during a WebDriver session it raises the native
+"Safari is Running an Automated Test" alert, which swallows that gesture and every
+one after it. Choose before booting:
+
+- **Mode A — safaridriver** (`sim-session.mjs`): static measurement of a page as
+  loaded. JS injection, geometry, viewport units, page screenshots. **No gestures.**
+- **Mode B — bridge** (`sim-bridge.mjs`): anything involving a real gesture —
+  scrolling, toolbar collapse, momentum, rubber-band, touch focus. The bridge
+  reverse-proxies the target and injects a measurement agent, so no WebDriver
+  session exists and the lock never appears. Read `./references/automation-lock.md`.
+
+If the task says "scroll", "collapse the toolbar", or "after scrolling" → Mode B.
 
 ## Workflow
 
@@ -64,19 +83,22 @@ DEVICE_MATCH: iPad Air 13  # Substring to pick the device from `simctl list` (ma
 2. **Boot the Simulator and driver**
    - Boot the device, open the Simulator GUI (needed — CGEvent scroll drives the visible window), start safaridriver.
    - Tool: `xcrun simctl boot <udid>`; `open -a Simulator`; `safaridriver -p <DRIVER_PORT> &` then `curl -s localhost:<DRIVER_PORT>/status`.
+   - IF: Mode B → skip safaridriver entirely; an active WebDriver *session* is what raises the automation lock, and the bridge needs none.
    - Example: `{"value":{"ready":true}}` → driver is up. If a prior run left a session, `xcrun simctl terminate <udid> com.apple.mobilesafari` clears a stuck Safari pairing.
 
 3. **Open the page and read the baseline**
-   - Create a session, navigate, capture the untouched viewport state.
-   - Tool: `node ./scripts/sim-session.mjs open <udid> "<url>"` then `node ./scripts/sim-session.mjs viewport`.
+   - Navigate and capture the untouched viewport state.
+   - Tool (Mode A): `node ./scripts/sim-session.mjs open <udid> "<url>"` then `node ./scripts/sim-session.mjs viewport`.
+   - Tool (Mode B): `node ./scripts/sim-bridge.mjs serve <targetOrigin> --port <BRIDGE_PORT> &`; `xcrun simctl openurl booted "http://localhost:<BRIDGE_PORT>/<path>"`; `node ./scripts/sim-bridge.mjs probe` for the baseline.
    - Example: local Storybook story `http://localhost:6006/iframe.html?...&id=...` → JSON showing `visualViewport.height`, `units.dvh/svh/lvh`, `units.pct_of_ICB`. For basic-auth staging, embed creds in the URL (`https://:pass@host/…`); a corporate ZTNA / self-signed cert shows a native "Not Private" interstitial that **cannot be automated** (see Gotchas).
 
 4. **Reproduce the state, then measure**
-   - Drive the interaction that triggers the bug, then screenshot + read geometry. Scrolling to collapse the toolbar is the usual trigger.
-   - Tool: `swift ./scripts/sim-scroll.swift 0.75 0.28 40` to scroll down; `node ./scripts/sim-session.mjs js "<measurement>"` for element geometry; `node ./scripts/sim-session.mjs shot out.png` then `Read out.png`.
-   - IF: the runtime is iOS 26+ and you need scroll/toolbar dynamics → the CGEvent drag is blocked by Safari's automation guard while the session is open; switch to the detached workflow (see Gotchas: embed the decorator with `?diag=1`, `simctl openurl`, scroll, `simctl io screenshot`).
-   - IF: you need to observe a transient mid-interaction state (open a dialog exactly while the toolbar is collapsed) → inject the diagnostic decorator so screenshots carry the numbers, and auto-trigger on viewport GROWTH. Read `./references/diagnostic-decorator.md`.
-   - IF: you need to tap web content → dispatch a JS click (`sim-session.mjs js "document.querySelector('…').click(); return 'ok'"`), NOT `sim-tap.swift` (see Gotchas).
+   - Drive the interaction that triggers the bug, then screenshot + read geometry. Scrolling to collapse the toolbar is the usual trigger — and it requires **Mode B**.
+   - Tool (Mode B): `swift ./scripts/sim-scroll.swift 0.8 0.25 60` to scroll down; then `node ./scripts/sim-bridge.mjs probe` (latest frame) / `eval "<js>"` (element geometry) / `log 40` (frame history across the gesture).
+   - Screenshot with `xcrun simctl io booted screenshot out.png` then `Read out.png` — it captures **Safari's chrome**, so you can see whether the toolbar actually collapsed. `sim-session.mjs shot` is page-only and will hide both the toolbar state and any native modal.
+   - IF: a drag prints `SCROLL_DONE` but `scrollY` stays 0 and the page logs no `touchstart` → the automation lock is up, not a focus/permission fault. Read `./references/automation-lock.md`.
+   - IF: you need to observe a transient mid-interaction state (open a dialog exactly while the toolbar is collapsed) → inject the diagnostic decorator so screenshots carry the numbers, and auto-trigger on viewport GROWTH. Read `./references/diagnostic-decorator.md`. In Mode B the bridge's HUD and `log` already do this.
+   - IF: you need to tap web content → dispatch a JS click (`.click()` via `sim-session.mjs js` or `sim-bridge.mjs eval`), NOT `sim-tap.swift` (see Gotchas).
    - Example: after scroll, `getBoundingClientRect()` on the offending element vs `visualViewport.height` → the gap in pixels, matching or refuting the report.
 
 5. **Interpret against the hardware-only test**
@@ -86,10 +108,19 @@ DEVICE_MATCH: iPad Air 13  # Substring to pick the device from `simctl list` (ma
 
 6. **Tear down**
    - Close cleanly so the next run isn't blocked by a stuck pairing.
-   - Tool: `node ./scripts/sim-session.mjs close`; `pkill -f "safaridriver -p <DRIVER_PORT>"`; optionally `xcrun simctl shutdown <udid>`.
+   - Tool: `node ./scripts/sim-session.mjs close`; `pkill -f "safaridriver -p <DRIVER_PORT>"`; `pkill -f "sim-bridge.mjs serve"` if Mode B ran; optionally `xcrun simctl shutdown <udid>`.
    - Example: session closed → re-running step 2 later starts fresh. If `open` errors with "already paired", `xcrun simctl terminate <udid> com.apple.mobilesafari` and retry.
 
 ## References
+
+### The automation lock, and gesture-capable Mode B
+
+- IF: any gesture is involved (scroll, toolbar collapse, momentum, touch focus), or a drag reports `SCROLL_DONE` while the page doesn't move
+- THEN: Read and apply `./references/automation-lock.md`
+- EXAMPLES:
+  - "scroll until the toolbar collapses, then measure the sheet"
+  - "the drag says it worked but scrollY is still 0"
+  - "a modal I can't see is blocking the Simulator"
 
 ### Painting measurements into device screenshots
 
@@ -104,10 +135,11 @@ DEVICE_MATCH: iPad Air 13  # Substring to pick the device from `simctl list` (ma
 
 Environment facts learned the hard way — they defy reasonable assumptions:
 
-- **safaridriver interaction is broken on the Simulator.** WebDriver touch-pointer actions **hang** (request never returns); wheel actions return **501 not implemented**; discrete synthetic pointer clicks do **not** reliably convert to device touches. What works: `sim-scroll.swift` (CGEvent drag) for scrolling, and JS `.click()` dispatch for tapping web content. `sim-tap.swift` (coordinate click) is a last resort and does **not** work on native UI at all.
-- **iOS 26 runtimes: Safari's automation guard blocks ALL outside input during a session.** Any CGEvent tap/drag summons a native "Safari is Running an Automated Test" modal; every further event re-summons it, "Continue Testing" does not unblock, and zero events reach the page (verify with an event-listener spy — it stays empty). Closing the session **quits Safari entirely**, so a "close, scroll, reattach" plan dies too. Consequence: on iOS 26+, CGEvent scroll and an active WebDriver session cannot coexist — use the detached workflow below. (On iOS 18-era runtimes the CGEvent drag coexists with the session.)
-- **Detached measurement workflow (iOS 26+, pages you control).** Embed the diagnostic decorator in the page source behind a `?diag=1` flag (the reference's Storybook variant), then skip WebDriver entirely: `xcrun simctl openurl <udid> "<url>?diag=1"` → `swift ./scripts/sim-scroll.swift` (no session → no guard → drag works) → `xcrun simctl io <udid> screenshot out.png`. The painted overlay carries the measurements. Verified live on iOS 26.5: vv 1280→1309 on toolbar collapse, and `100% === dvh` (1309) — reconfirming the stale-ICB hardware-only rule above.
-- **Native Safari UI is unautomatable.** Cert interstitials ("This Connection Is Not Private"), share sheets, and system dialogs ignore synthetic clicks. A corporate **ZTNA / self-signed staging cert** therefore walls the sim even with correct basic-auth creds — you need a human tap, or a device already enrolled/trusted. Don't burn time scripting past it.
+- **A CGEvent gesture during a WebDriver session raises the automation lock and is silently eaten.** iOS can't distinguish a synthetic drag from a finger, so it shows the native "Safari is Running an Automated Test" alert — which then blocks every subsequent gesture. `sim-scroll.swift` still prints `SCROLL_DONE` (it posted the events fine); the page just never receives them. **Use Mode B (`sim-bridge.mjs`) for all gesture work.** Full detail + recovery: `./references/automation-lock.md`.
+- **safaridriver interaction is broken on the Simulator.** WebDriver touch-pointer actions **hang** (request never returns); wheel actions return **501 not implemented**; discrete synthetic pointer clicks do **not** reliably convert to device touches. What works: `sim-scroll.swift` (CGEvent drag, Mode B only) for scrolling, and JS `.click()` dispatch for tapping web content.
+- **`sim-tap.swift` takes DEVICE POINTS, not fractions.** `0..1024 × 0..1366` on an iPad Air 13". Passing `0.5 0.635` taps the window's top-left corner and looks like "native UI ignored my click". Read real coordinates off a `simctl io booted screenshot` (screenshot px ÷ 2 at 2x).
+- **Native Safari UI is *partly* automatable — the distinction matters.** The automation-lock alert **does** respond to synthetic clicks (a mis-aimed tap on it will hit "Stop Test Session" and kill your session). Cert interstitials ("This Connection Is Not Private") genuinely do not. So a corporate **ZTNA / self-signed staging cert** still walls the sim even with correct basic-auth creds — you need a human tap or an enrolled device. Don't burn time scripting past *that* one.
+- **safaridriver screenshots are page-only.** They show a normal-looking page while a native modal covers the screen, and never show the toolbar — so they cannot tell you whether it collapsed. Use `xcrun simctl io booted screenshot` whenever chrome or native UI matters.
 - **The Simulator can't reproduce stale-ICB / dynamic-viewport bugs.** Its WebKit resolves `height:100%` to the *dynamic* viewport, so `pct_of_ICB === dvh` after the toolbar collapses and there is no gap. Real iPad hardware keeps `100%`/ICB pinned to the *small* viewport, which is the actual bug. Consequence: the sim can neither reproduce these nor distinguish a `100%`→`100dvh` fix from the status quo. Verify the fix is a no-op in the sim (zero regression) and hand real-device confirmation to the user. This is a *decision-saver* — check step 5 early.
 - **CGEvent needs a focused Simulator and Accessibility permission.** `check-accessibility.swift` must print `true`; the scroll/tap helpers click the Simulator title bar to focus it first (`NSWorkspace.activate` is unreliable). If drags don't scroll, the window isn't frontmost or permission is missing.
 - **Small-viewport height is version-specific.** iPad Air 13" reads ~1280 (iOS 26) vs ~1292 (iOS 18.4) with the toolbar shown. Auto-trigger logic must key off viewport **growth from a captured baseline**, never an absolute pixel threshold.

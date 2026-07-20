@@ -82,9 +82,12 @@ navigation — the overlay survives reloads. **Revert it before committing.**
 The injected-JS form above needs no source change and is the default for
 third-party pages.
 
-On **iOS 26+ runtimes this embedded form is REQUIRED for scroll dynamics**:
-Safari's automation guard blocks all CGEvent input while a WebDriver session is
-open (see SKILL.md Gotchas), so the measurement run happens with no session at
-all — `xcrun simctl openurl <udid> "<url>?diag=1"`, CGEvent scroll, then
-`xcrun simctl io <udid> screenshot out.png`. The overlay in the screenshot is
-your only readout; there is no `js` channel in this mode.
+For **scroll dynamics**, none of these forms work under a WebDriver session —
+Safari's automation lock eats every CGEvent gesture while a session is open
+(see `automation-lock.md`). Gesture work goes through **Mode B**
+(`sim-bridge.mjs`), whose injected agent already provides this overlay as a
+HUD plus a `probe`/`eval`/`log` JS channel — so for bridge runs you don't
+need this decorator at all. The embedded `?diag=1` form remains useful as a
+zero-dependency fallback: `xcrun simctl openurl <udid> "<url>?diag=1"`,
+CGEvent scroll, then `xcrun simctl io <udid> screenshot out.png` — the
+overlay in the screenshot is your only readout in that mode.
