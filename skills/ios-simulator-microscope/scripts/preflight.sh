@@ -7,23 +7,34 @@
 #
 # It NEVER installs anything or grants permissions — several of these (Xcode,
 # `safaridriver --enable`, Accessibility) are human-only actions by design.
-# The agent running this should relay FAIL lines to the user verbatim and stop.
+# The agent running this should relay FAIL lines to the user verbatim. On
+# RESULT: FAIL stop; on RESULT: DEGRADED continue — only the CGEvent gesture
+# helpers (sim-scroll/sim-tap) are unavailable, everything else works.
 #
 # Usage: ./preflight.sh [--help]
-# Exit codes: 0 all checks pass · 1 one or more checks fail
+# Exit codes: 0 all pass · 1 hard failure (stop) · 3 degraded (gesture-only
+#             checks failed: swift and/or accessibility — proceed without gestures)
 
 set -u
 
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
-  sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 fails=0
+soft_fails=0
+
+# swift + accessibility gate only the CGEvent gesture helpers — their failure
+# degrades the skill (no real gestures) instead of blocking it.
+is_soft() { case "$1" in swift|accessibility) return 0 ;; *) return 1 ;; esac; }
 
 pass() { printf 'PASS %s — %s\n' "$1" "$2"; }
-fail() { printf 'FAIL %s — %s | fix: %s\n' "$1" "$2" "$3"; fails=$((fails + 1)); }
+fail() {
+  printf 'FAIL %s — %s | fix: %s\n' "$1" "$2" "$3"
+  if is_soft "$1"; then soft_fails=$((soft_fails + 1)); else fails=$((fails + 1)); fi
+}
 
 # 1. Platform — everything below is macOS-only (Xcode Simulator, safaridriver,
 #    CGEvent). There is no Windows/Linux equivalent; stop here if this fails.
@@ -100,10 +111,13 @@ else
     "fix the swift check above first, then re-run"
 fi
 
-if [ "$fails" -eq 0 ]; then
-  echo "RESULT: PASS — environment ready"
-  exit 0
-else
+if [ "$fails" -gt 0 ]; then
   echo "RESULT: FAIL ($fails) — relay the fix lines above to the user; do not proceed"
   exit 1
+elif [ "$soft_fails" -gt 0 ]; then
+  echo "RESULT: DEGRADED ($soft_fails) — CGEvent gesture helpers (sim-scroll/sim-tap) unavailable; static measurement, the bridge, and programmatic scrolling still work. Relay the fix lines, then proceed without real gestures."
+  exit 3
+else
+  echo "RESULT: PASS — environment ready"
+  exit 0
 fi

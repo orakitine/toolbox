@@ -52,8 +52,10 @@ return (() => {
 })()
 ```
 
-Then: `sim-scroll.swift` to collapse the toolbar → `sim-session.mjs shot out.png`
-→ `Read out.png`. The red box shows the numbers at that frame.
+Then collapse the toolbar (**Mode B only** — under a Mode A WebDriver session
+the CGEvent drag is silently eaten by the automation lock, see below):
+`sim-scroll.swift` → `sim-session.mjs shot out.png` → `Read out.png`. The red
+box shows the numbers at that frame.
 
 ## Auto-trigger on viewport GROWTH, not an absolute threshold
 

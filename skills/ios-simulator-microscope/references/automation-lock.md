@@ -112,7 +112,7 @@ HUD (`--hud 0` to disable) so `simctl` screenshots carry the numbers.
   cert interstitial is genuinely unautomatable (see SKILL.md gotchas).
 - Paths beginning `/__` are reserved by the bridge.
 
-> **Status: verified** on iPad Air 13" (M4), iOS 26.3 (2026-07-20). A CGEvent drag
+> **Observed** on iPad Air 13" (M4), iOS 26.3 — re-verify on newer runtimes. A CGEvent drag
 > through the proxy scrolled the page `scrollY 0 → 1403` and collapsed the toolbar
 > (`grew 0 → 29`, `dvh 1280 → 1309`) with **no** automation modal; `probe` and
 > `eval` both returned live numbers. This is the scenario safaridriver cannot do.

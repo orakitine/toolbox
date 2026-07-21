@@ -13,9 +13,8 @@ description: >-
   programmatic or touch focus, momentum-scroll or rubber-band glitches,
   sticky/fixed drift, top-layer <dialog>/sheet coverage, safe-area insets, or
   any "works in Storybook but broken on iPad" report. Trigger phrases: "test on
-  the iPad simulator", "reproduce this on iOS", "measure it in the iOS
-  simulator", "drive the iOS simulator", "iOS Safari only bug", "check on real
-  Safari", "simulator viewport / toolbar / focus / rendering".
+  the iPad simulator", "reproduce this on iOS", "iOS Safari only bug", "check
+  on real Safari".
 license: MIT
 compatibility: >-
   macOS with Xcode + iOS Simulator runtimes (xcrun simctl, safaridriver).
@@ -27,7 +26,7 @@ allowed-tools:
 argument-hint: "[device] [url] [what to inspect]"
 metadata:
   author: oleg
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Purpose
@@ -76,7 +75,8 @@ If the task says "scroll", "collapse the toolbar", or "after scrolling" → Mode
 1. **Confirm the environment**
    - Run the preflight doctor, then pick the target device.
    - Tool: `bash ./scripts/preflight.sh` — one PASS/FAIL line per check.
-   - IF: any line is FAIL → relay its `fix:` remediation to the user verbatim and STOP; every failing check (Xcode install, `safaridriver --enable`, Accessibility grant) is a human-only action. On non-macOS the script exits immediately: this skill is macOS-only.
+   - IF: `RESULT: FAIL` → relay each `fix:` remediation to the user verbatim and STOP; those checks (Xcode install, `safaridriver --enable`) are human-only actions. On non-macOS the script exits immediately: this skill is macOS-only.
+   - IF: `RESULT: DEGRADED` (only `swift`/`accessibility` failed) → relay the fix lines, then CONTINUE: those gate only the CGEvent helpers (`sim-scroll.swift`, `sim-tap.swift`). Static measurement, the bridge, and programmatic scrolling (`sim-bridge.mjs eval "window.scrollBy(0,600)"`) all work without them — enough to trigger lazy-loading, scroll-position logic, and IntersectionObservers. Only true toolbar-collapse / momentum / rubber-band dynamics require the real gesture.
    - IF: all PASS → `xcrun simctl list devices available | grep -i "<DEVICE_MATCH>"` to get a UDID.
    - Example: report says "iPad Air 13-inch M2" → pick an `iPad Air 13-inch` UDID on the closest iOS runtime; if the bug is version-sensitive, note two UDIDs (e.g. one on iOS 18.x, one on 26.x).
 
@@ -89,12 +89,14 @@ If the task says "scroll", "collapse the toolbar", or "after scrolling" → Mode
 3. **Open the page and read the baseline**
    - Navigate and capture the untouched viewport state.
    - Tool (Mode A): `node ./scripts/sim-session.mjs open <udid> "<url>"` then `node ./scripts/sim-session.mjs viewport`.
-   - Tool (Mode B): `node ./scripts/sim-bridge.mjs serve <targetOrigin> --port <BRIDGE_PORT> &`; `xcrun simctl openurl booted "http://localhost:<BRIDGE_PORT>/<path>"`; `node ./scripts/sim-bridge.mjs probe` for the baseline.
+   - Tool (Mode B): `node ./scripts/sim-bridge.mjs serve <targetOrigin> --port <BRIDGE_PORT> &`; `xcrun simctl openurl booted "http://localhost:<BRIDGE_PORT>/<path>"`; `node ./scripts/sim-bridge.mjs probe` for the baseline. Re-testing after a code change or a previous bridge run? Add `--fresh` — it mints a random port, i.e. a brand-new localhost origin Safari has never cached (see Gotchas).
+   - IF: instrumentation must run before the page's own scripts (message taps, early hooks) → `serve … --init-js hooks.js` inlines that file right after the agent, ahead of all page code.
    - Example: local Storybook story `http://localhost:6006/iframe.html?...&id=...` → JSON showing `visualViewport.height`, `units.dvh/svh/lvh`, `units.pct_of_ICB`. For basic-auth staging, embed creds in the URL (`https://:pass@host/…`); a corporate ZTNA / self-signed cert shows a native "Not Private" interstitial that **cannot be automated** (see Gotchas).
 
 4. **Reproduce the state, then measure**
    - Drive the interaction that triggers the bug, then screenshot + read geometry. Scrolling to collapse the toolbar is the usual trigger — and it requires **Mode B**.
-   - Tool (Mode B): `swift ./scripts/sim-scroll.swift 0.8 0.25 60` to scroll down; then `node ./scripts/sim-bridge.mjs probe` (latest frame) / `eval "<js>"` (element geometry) / `log 40` (frame history across the gesture).
+   - Tool (Mode B): `swift ./scripts/sim-scroll.swift 0.8 0.25 60` to scroll down; then `node ./scripts/sim-bridge.mjs probe` (latest frame) / `eval "<js>"` (element geometry) / `console 50` (page console + JS errors) / `log 40` (frame history across the gesture).
+   - **`eval` contract:** a bare expression returns its value (`eval "window.scrollY"` — auto-wrapped in `return (...)`); a multi-statement script runs as a function body and needs an explicit `return`, else the answer is `result: null` with a hint. Every answer carries `answeredBy` (the URL of the page that ran it) — **check it**: with more than one tab connected, evals go to whichever client polls first. `clients` lists connected pages; `eval "<js>" --match <url-substring>` pins the eval to one of them.
    - Screenshot with `xcrun simctl io booted screenshot out.png` then `Read out.png` — it captures **Safari's chrome**, so you can see whether the toolbar actually collapsed. `sim-session.mjs shot` is page-only and will hide both the toolbar state and any native modal.
    - IF: a drag prints `SCROLL_DONE` but `scrollY` stays 0 and the page logs no `touchstart` → the automation lock is up, not a focus/permission fault. Read `./references/automation-lock.md`.
    - IF: you need to observe a transient mid-interaction state (open a dialog exactly while the toolbar is collapsed) → inject the diagnostic decorator so screenshots carry the numbers, and auto-trigger on viewport GROWTH. Read `./references/diagnostic-decorator.md`. In Mode B the bridge's HUD and `log` already do this.
@@ -135,9 +137,9 @@ If the task says "scroll", "collapse the toolbar", or "after scrolling" → Mode
 
 Environment facts learned the hard way — they defy reasonable assumptions:
 
-- **A CGEvent gesture during a WebDriver session raises the automation lock and is silently eaten.** iOS can't distinguish a synthetic drag from a finger, so it shows the native "Safari is Running an Automated Test" alert — which then blocks every subsequent gesture. `sim-scroll.swift` still prints `SCROLL_DONE` (it posted the events fine); the page just never receives them. **Use Mode B (`sim-bridge.mjs`) for all gesture work.** Full detail + recovery: `./references/automation-lock.md`.
+- **A CGEvent gesture during a WebDriver session is silently eaten by the automation lock** — see *Pick a mode first* and `./references/automation-lock.md` for detail + recovery.
 - **safaridriver interaction is broken on the Simulator.** WebDriver touch-pointer actions **hang** (request never returns); wheel actions return **501 not implemented**; discrete synthetic pointer clicks do **not** reliably convert to device touches. What works: `sim-scroll.swift` (CGEvent drag, Mode B only) for scrolling, and JS `.click()` dispatch for tapping web content.
-- **`sim-tap.swift` takes DEVICE POINTS, not fractions.** `0..1024 × 0..1366` on an iPad Air 13". Passing `0.5 0.635` taps the window's top-left corner and looks like "native UI ignored my click". Read real coordinates off a `simctl io booted screenshot` (screenshot px ÷ 2 at 2x).
+- **`sim-tap.swift` takes DEVICE POINTS, not fractions.** `0..1024 × 0..1366` on an iPad Air 13". Passing `0.5 0.635` taps the window's top-left corner and looks like "native UI ignored my click". Read real coordinates off a `simctl io booted screenshot` (screenshot px ÷ 2 at 2x), and sanity-check the window mapping with `swift ./scripts/sim-window.swift`.
 - **Native Safari UI is *partly* automatable — the distinction matters.** The automation-lock alert **does** respond to synthetic clicks (a mis-aimed tap on it will hit "Stop Test Session" and kill your session). Cert interstitials ("This Connection Is Not Private") genuinely do not. So a corporate **ZTNA / self-signed staging cert** still walls the sim even with correct basic-auth creds — you need a human tap or an enrolled device. Don't burn time scripting past *that* one.
 - **safaridriver screenshots are page-only.** They show a normal-looking page while a native modal covers the screen, and never show the toolbar — so they cannot tell you whether it collapsed. Use `xcrun simctl io booted screenshot` whenever chrome or native UI matters.
 - **The Simulator can't reproduce stale-ICB / dynamic-viewport bugs.** Its WebKit resolves `height:100%` to the *dynamic* viewport, so `pct_of_ICB === dvh` after the toolbar collapses and there is no gap. Real iPad hardware keeps `100%`/ICB pinned to the *small* viewport, which is the actual bug. Consequence: the sim can neither reproduce these nor distinguish a `100%`→`100dvh` fix from the status quo. Verify the fix is a no-op in the sim (zero regression) and hand real-device confirmation to the user. This is a *decision-saver* — check step 5 early.
@@ -146,10 +148,13 @@ Environment facts learned the hard way — they defy reasonable assumptions:
 - **`open` fails with "already paired" after a crash.** Clear it with `xcrun simctl terminate <udid> com.apple.mobilesafari`, then retry — don't recreate the driver.
 - **"Could not find any session hosts" hides two distinct causes.** (1) Remote automation not enabled — the simulator path reports it with this generic message, but a *host*-Safari probe names it: `curl -s -X POST localhost:<DRIVER_PORT>/session -H 'Content-Type: application/json' -d '{"capabilities":{"alwaysMatch":{"browserName":"Safari"}}}'`. An explicit "must enable 'Allow remote automation'" error → human runs `safaridriver --enable` (needs auth) or Safari → Settings → Developer → Allow remote automation. If the probe *succeeds*, DELETE its session, and the cause is (2): a runtime/Safari version gap — safaridriver won't pair with a much older simulator runtime (observed: safaridriver 26.x vs iOS 17.0 runtime). Fix: install a current iOS Simulator runtime (update Xcode, or `xcodebuild -downloadPlatform iOS` — multi-GB, ask the user first).
 - **`xcode-select` pointing at CommandLineTools breaks simctl AND safaridriver — and only sudo truly fixes it.** If `xcode-select -p` prints `/Library/Developer/CommandLineTools` while `/Applications/Xcode.app` exists: `DEVELOPER_DIR=/Applications/Xcode.app` rescues `xcrun simctl`, but safaridriver **ignores it** when locating Simulator.app — session creation fails with "Could not find Simulator.app or a devices:// URL handler" (and `lsregister`/relaunching Simulator does not help). The only fix is the human running `sudo xcode-select -s /Applications/Xcode.app`, then restarting safaridriver.
+- **Sim Safari's cache survives everything short of a new origin.** It serves stale HTML *and* stale JS chunks for a proxied localhost origin even across `simctl terminate` of Safari and cache-busting query strings — on hydrating apps this manifests as fresh server HTML silently "patched back" to old markup by stale-cached client JS (hydration mismatch), which reads exactly like your change didn't deploy. A new port is a new origin with an empty cache: re-serve with `--fresh` (or hand-pick an unused port) after every build you intend to verify.
+- **Evals go to whichever connected page polls first.** Background tabs are suspended by iOS but wake unpredictably and can answer an eval meant for the foreground page — measurements then interleave across tabs and fabricate phantom effects (scroll positions jumping, wrong DOM). Always check `answeredBy` in the response; run `clients` when anything looks impossible; use `--match <url-substring>` to pin evals to one page; `simctl terminate booted com.apple.mobilesafari` + reopen to guarantee a single tab.
+- **Reverse-proxying a child iframe's SPA origin usually kills the app.** Serving a second bridge for the iframe's origin injects the agent fine, but SPAs break under a swapped origin (base-href, absolute API URLs, service-worker scope) — the child may blank out, reload loops, or self-remove its own iframe. Parent-side message taps still work through it; just don't expect the child app to *function*. For looking *inside* a cross-origin iframe on desktop engines, plain Playwright reaches into OOPIFs natively (`page.frames()`) — exhaust that first, and burn a Simulator run only on the iOS-specific part.
 
 ## Works well with
 
 Optional collaborators — this skill runs standalone and these degrade gracefully if absent.
 
-- **`browser-microscope`** — the desktop-Playwright counterpart. Reproduce and measure there first (faster, no Simulator boot); escalate here only when the bug is iOS-Safari-only or involves toolbar/dynamic-viewport/touch dynamics Playwright can't model.
+- **`browser-microscope`** — the desktop-Playwright counterpart. Reproduce and measure there first (faster, no Simulator boot, reaches cross-origin iframes natively); escalate here only when the bug is iOS-Safari-only or involves toolbar/dynamic-viewport/touch dynamics Playwright can't model.
 - **`diagnose`** — this skill is the reproduce-and-instrument step for iOS-Safari-only bug reports inside a disciplined diagnosis loop; measurements here become the evidence for its hypothesise/fix/regression-test phases.
