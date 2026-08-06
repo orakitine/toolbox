@@ -1,6 +1,6 @@
 # Toolbox
 
-Public collection of Claude Code skills, agents, and prompts.
+Public collection of Claude Code skills, agents, prompts, output styles, and config files.
 
 Managed by [The Registry](https://github.com/orakitine/registry).
 
@@ -33,6 +33,18 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 | [gen-image-operator](agents/gen-image-operator.md) | Image generation and editing, parallel-safe |
 | [speak-narrator](agents/speak-narrator.md) | Narration agent, delivers spoken summaries via speak |
 
+## Output Styles
+
+| Style | Description |
+|-------|-------------|
+| [skippy](output-styles/skippy.md) | Skippy the Magnificent — sarcastic Elder AI persona (Expeditionary Force) |
+
+## Configs
+
+| Config | Description |
+|--------|-------------|
+| [statusline](statusline/statusline.sh) | Status line: model, dir, git branch, context %, rate-limit % (jq preferred, python3 fallback) |
+
 ## Usage
 
 Register a skill from this repo:
@@ -51,4 +63,6 @@ Pull it into any project:
 skills/<name>/SKILL.md     # Skill workflow + supporting files
 agents/<name>.md           # Agent configurations
 prompts/<name>.md          # Reusable prompts
+output-styles/<name>.md    # Claude Code output styles
+statusline/<file>          # Status line script + other config files
 ```
