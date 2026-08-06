@@ -37,6 +37,7 @@ Managed by [The Registry](https://github.com/orakitine/registry).
 
 | Style | Description |
 |-------|-------------|
+| [asd-ste100](output-styles/asd-ste100.md) | ASD-STE100 Simplified Technical English (Issue 9) — short sentences, active voice, one-meaning words |
 | [skippy](output-styles/skippy.md) | Skippy the Magnificent — sarcastic Elder AI persona (Expeditionary Force) |
 
 ## Configs
