@@ -10,6 +10,7 @@
 #   3. Git branch + dirty marker "*" (only shown inside a git repo)
 #   4. Context-window usage %, color-coded: green <50%, yellow 50-80%, red >80%
 #   5. 5-hour rate-limit usage % + time-to-reset, same green/yellow/red scheme
+#   6. 7-day (weekly) rate-limit usage % + reset date, same color scheme
 #
 # JSON parsing prefers `jq` (fast) and falls back to `python3` if jq isn't
 # installed. No network calls are made; this is designed to stay well under
@@ -52,19 +53,23 @@ color_for_pct() {
 # Parse the fields we need out of stdin JSON in a single pass (avoids
 # spawning jq/python3 more than once, which matters for latency).
 # Fields, tab-separated: model_display, current_dir, ctx_used_pct,
-# five_hour_used_pct, five_hour_resets_at
+# five_hour_used_pct, five_hour_resets_at, seven_day_used_pct,
+# seven_day_resets_at
 # ---------------------------------------------------------------------------
 if command -v jq >/dev/null 2>&1; then
   parsed="$(printf '%s' "$input" | jq -r '
+    def epoch: if . == null then ""
+      elif type == "number" then floor
+      else (try (sub("\\.[0-9]+"; "") | fromdateiso8601) catch "")
+      end | tostring;
     [
       (.model.display_name // "Claude"),
       (.workspace.current_dir // .cwd // ""),
       (.context_window.used_percentage // "" | tostring),
       (.rate_limits.five_hour.used_percentage // "" | tostring),
-      (.rate_limits.five_hour.resets_at // "" |
-        if type == "number" then floor
-        else (try (sub("\\.[0-9]+"; "") | fromdateiso8601) catch "")
-        end | tostring)
+      (.rate_limits.five_hour.resets_at | epoch),
+      (.rate_limits.seven_day.used_percentage // "" | tostring),
+      (.rate_limits.seven_day.resets_at | epoch)
     ] | @tsv
   ')"
 else
@@ -89,26 +94,31 @@ cwd = g(data, "workspace", "current_dir") or (data.get("cwd") if isinstance(data
 used_pct = g(data, "context_window", "used_percentage")
 five_used = g(data, "rate_limits", "five_hour", "used_percentage")
 five_resets = g(data, "rate_limits", "five_hour", "resets_at")
+seven_used = g(data, "rate_limits", "seven_day", "used_percentage")
+seven_resets = g(data, "rate_limits", "seven_day", "resets_at")
 
 # Normalize resets_at to a Unix epoch: it may arrive as a number or an
 # ISO-8601 string like "2026-07-17T23:00:00Z".
-if isinstance(five_resets, str) and five_resets:
-    from datetime import datetime
-    try:
-        five_resets = int(datetime.fromisoformat(five_resets.replace("Z", "+00:00")).timestamp())
-    except ValueError:
-        five_resets = None
-elif isinstance(five_resets, (int, float)):
-    five_resets = int(five_resets)
+def epoch(v):
+    if isinstance(v, str) and v:
+        from datetime import datetime
+        try:
+            return int(datetime.fromisoformat(v.replace("Z", "+00:00")).timestamp())
+        except ValueError:
+            return None
+    if isinstance(v, (int, float)):
+        return int(v)
+    return None
 
 def s(v):
     return "" if v is None else str(v)
 
-print("\t".join([model, cwd, s(used_pct), s(five_used), s(five_resets)]))
+print("\t".join([model, cwd, s(used_pct), s(five_used), s(epoch(five_resets)),
+                 s(seven_used), s(epoch(seven_resets))]))
 ')"
 fi
 
-IFS=$'\t' read -r model_display cur_dir ctx_used_pct five_used_pct five_resets_at <<< "$parsed"
+IFS=$'\t' read -r model_display cur_dir ctx_used_pct five_used_pct five_resets_at seven_used_pct seven_resets_at <<< "$parsed"
 
 # Middle-truncate a string to $2 chars, keeping head and tail around a "…".
 mid_truncate() {
@@ -230,12 +240,41 @@ if [ -n "$five_used_pct" ]; then
 fi
 
 # ---------------------------------------------------------------------------
+# 6. 7-day (weekly) rate-limit usage % + reset date, color-coded. The reset
+#    is days away, so a calendar date ("Aug 14") reads better than a
+#    countdown; within the last 24h it switches to "XhYm" like the 5h segment.
+# ---------------------------------------------------------------------------
+week_segment=""
+if [ -n "$seven_used_pct" ]; then
+  week_color="$(color_for_pct "$seven_used_pct")"
+  week_int="${seven_used_pct%%.*}"
+  week_reset_str=""
+  wresets_int="${seven_resets_at%%.*}"
+  if [ -n "$wresets_int" ] && [ -z "${wresets_int//[0-9]/}" ]; then
+    now_epoch="$(date +%s)"
+    remaining=$(( wresets_int - now_epoch ))
+    if [ "$remaining" -gt 86400 ]; then
+      # date -r is the BSD/macOS form; GNU date uses -d @epoch.
+      wdate="$(date -r "$wresets_int" +'%b %-d' 2>/dev/null \
+        || date -d "@$wresets_int" +'%b %-d' 2>/dev/null)"
+      [ -n "$wdate" ] && week_reset_str=" (${wdate})"
+    elif [ "$remaining" -gt 0 ]; then
+      hrs=$(( remaining / 3600 ))
+      mins=$(( (remaining % 3600) / 60 ))
+      week_reset_str=" (${hrs}h${mins}m)"
+    fi
+  fi
+  week_segment="${GREY}Wk:${RESET}${week_color}${week_int}%${RESET}${GREY}${week_reset_str}${RESET}"
+fi
+
+# ---------------------------------------------------------------------------
 # Assemble the final line: join non-empty segments with " | ".
 # ---------------------------------------------------------------------------
 parts=("${CYAN}${model_display}${RESET}" "${BLUE}${dir_display}${RESET}")
 [ -n "$git_segment" ] && parts+=("$git_segment")
 [ -n "$ctx_segment" ] && parts+=("$ctx_segment")
 [ -n "$five_segment" ] && parts+=("$five_segment")
+[ -n "$week_segment" ] && parts+=("$week_segment")
 
 out=""
 for p in "${parts[@]}"; do
